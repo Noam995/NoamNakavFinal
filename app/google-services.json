@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "305622103637",
+    "firebase_url": "https://noamfirebase-76afc-default-rtdb.firebaseio.com",
+    "project_id": "noamfirebase-76afc",
+    "storage_bucket": "noamfirebase-76afc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305622103637:android:9f0bcdccce5912490b86dc",
+        "android_client_info": {
+          "package_name": "com.example.noamnakavfinal"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJTn51IzjTt00e5Nw8WODm0Y8vYWpD1rA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
