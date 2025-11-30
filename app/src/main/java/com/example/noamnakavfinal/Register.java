@@ -2,7 +2,9 @@ package com.example.noamnakavfinal;
 
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,6 +39,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     private Button btnRegister;
     private TextView tvLogin;
     private DatabaseService databaseService;
+    public static final String MyPREFERENCES="MyPrefs";
+    SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +68,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         /// set the click listener
         btnRegister.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
+        sharedPreferences=getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+
+
     }
 
     @Override
@@ -72,6 +80,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             Log.d(TAG, "onClick: Register button clicked");
 
             /// get the input from the user
+
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
             String fName = etFName.getText().toString();
@@ -115,6 +124,15 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 /// save the user to shared preferences
                 user.setId(uid);
                 Log.d(TAG, "createUserInDatabase: Redirecting to MainActivity");
+                String email = etEmail.getText().toString();
+                String password = etPassword.getText().toString();
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.putString("email", email);
+                editor.putString("password", password);
+
+                editor.commit();
+
                 /// Redirect to MainActivity and clear back stack to prevent user from going back to register screen
                 Intent mainIntent = new Intent(Register.this, MainActivity.class);
                 /// clear the back stack (clear history) and start the MainActivity
