@@ -12,6 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NoamNakavFinal">
         <activity
+            android:name=".CarDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SearchAllCars"
+            android:exported="false" />
+        <activity
+            android:name=".Alluserpage"
+            android:exported="false" />
+        <activity
+            android:name=".AddNewCar"
+            android:exported="false" />
+        <activity
+            android:name=".UserPage"
+            android:exported="false" />
+        <activity
+            android:name=".AdminPage"
+            android:exported="false" />
+        <activity
             android:name=".Register"
             android:exported="false" />
         <activity

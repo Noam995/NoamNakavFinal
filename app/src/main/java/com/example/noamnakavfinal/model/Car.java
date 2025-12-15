@@ -17,8 +17,9 @@ public class Car {
     protected double engineVolume;
     protected String engine;
     protected boolean available;
+    protected String image64;
 
-    public Car(String id, String licenseCar, String brand, String model, String color, String year, double price, double km, int hand, String gearbox, String ownership, String gas, String timeUntilTest, double engineVolume, String engine, boolean available) {
+    public Car(String id, String licenseCar, String brand, String model, String color, String year, double price, double km, int hand, String gearbox, String ownership, String gas, String timeUntilTest, double engineVolume, String engine, boolean available, String image64) {
         this.id = id;
         this.licenseCar = licenseCar;
         this.brand = brand;
@@ -35,6 +36,7 @@ public class Car {
         this.engineVolume = engineVolume;
         this.engine = engine;
         this.available = available;
+        this.image64 = image64;
     }
 
     public Car() {
@@ -168,6 +170,14 @@ public class Car {
         this.available = available;
     }
 
+    public String getImage64() {
+        return image64;
+    }
+
+    public void setImage64(String image64) {
+        this.image64 = image64;
+    }
+
     @Override
     public String toString() {
         return "Car{" +
@@ -187,8 +197,13 @@ public class Car {
                 ", engineVolume=" + engineVolume +
                 ", engine='" + engine + '\'' +
                 ", available=" + available +
+                ", image64='" + image64 + '\'' +
                 '}';
     }
 }
+
+
+
+
 
 

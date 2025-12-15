@@ -49,6 +49,7 @@
                 android:ems="10"
                 android:hint="First Name"
                 android:inputType="text"
+                android:minHeight="48dp"
                 tools:layout_editor_absoluteX="82dp"
                 tools:layout_editor_absoluteY="30dp" />
         </LinearLayout>
@@ -69,6 +70,7 @@
                 android:hint="Last Name"
                 android:inputType="text"
 
+                android:minHeight="48dp"
                 tools:layout_editor_absoluteX="82dp"
                 tools:layout_editor_absoluteY="97dp" />
         </LinearLayout>
@@ -88,6 +90,7 @@
                 android:ems="10"
                 android:hint="email"
                 android:inputType="textEmailAddress"
+                android:minHeight="48dp"
                 tools:layout_editor_absoluteX="82dp"
                 tools:layout_editor_absoluteY="165dp" />
         </LinearLayout>
@@ -107,6 +110,7 @@
                 android:ems="10"
                 android:hint="phone"
                 android:inputType="phone"
+                android:minHeight="48dp"
                 tools:layout_editor_absoluteX="82dp"
                 tools:layout_editor_absoluteY="241dp" />
         </LinearLayout>
@@ -126,6 +130,7 @@
                 android:ems="10"
                 android:hint="password"
                 android:inputType="phone"
+                android:minHeight="48dp"
                 tools:layout_editor_absoluteX="82dp"
                 tools:layout_editor_absoluteY="241dp" />
         </LinearLayout>
@@ -167,148 +172,10 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:id="@+id/textTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="נא למלא את הפרטים"
-                android:textSize="36sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:layout_marginBottom="40dp" />
-        </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="horizontal">
 
 
-            <EditText
-                android:id="@+id/etFname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="First Name"
-                android:inputType="text"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="30dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/etLname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Last Name"
-                android:inputType="text"
-
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="97dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
-
-            <EditText
-                android:id="@+id/etemail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="email"
-                android:inputType="textEmailAddress"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="165dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/etphone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="phone"
-                android:inputType="phone"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="241dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/etpassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="password"
-                android:inputType="phone"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="241dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
-
-            <Button
-                android:id="@+id/btnSubmit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="submit"
-                tools:layout_editor_absoluteX="165dp"
-                tools:layout_editor_absoluteY="498dp" />
-        </LinearLayout>
-
-
-    </LinearLayout>
 
 
 

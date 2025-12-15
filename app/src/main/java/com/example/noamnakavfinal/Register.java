@@ -5,9 +5,9 @@ package com.example.noamnakavfinal;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.nfc.Tag;
-import android.os.Bundle;
 import android.util.Log;
+import android.os.Bundle;
+
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Button;
@@ -20,10 +20,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.noamnakavfinal.R;
 import com.example.noamnakavfinal.model.User;
 import com.example.noamnakavfinal.service.DatabaseService;
-
 
 
 /// Activity for registering the user
@@ -39,8 +37,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     private Button btnRegister;
     private TextView tvLogin;
     private DatabaseService databaseService;
-    public static final String MyPREFERENCES="MyPrefs";
+
+    public static final String MyPREFERENCES = "MyPrefs";
     SharedPreferences sharedPreferences;
+    private String email,password;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,11 +54,11 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             return insets;
         });
 
-        databaseService=DatabaseService.getInstance();
+        databaseService = DatabaseService.getInstance();
 
         /// get the views
-        etEmail= findViewById(R.id.etemail);
-         etPassword = findViewById(R.id.etpassword);
+        etEmail = findViewById(R.id.etemail);
+        etPassword = findViewById(R.id.etpassword);
         etFName = findViewById(R.id.etFname);
         etLName = findViewById(R.id.etLname);
         etPhone = findViewById(R.id.etphone);
@@ -68,8 +68,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         /// set the click listener
         btnRegister.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
-        sharedPreferences=getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
 
     }
@@ -81,8 +80,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
             /// get the input from the user
 
-            String email = etEmail.getText().toString();
-            String password = etPassword.getText().toString();
+             email = etEmail.getText().toString();
+             password = etPassword.getText().toString();
             String fName = etFName.getText().toString();
             String lName = etLName.getText().toString();
             String phone = etPhone.getText().toString();
@@ -105,27 +104,27 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
 
         /// create a new user object
-        User user = new User("4545", fname, lname, phone, email, password, false);
 
 
+        User user = new User("fdf", fname, lname, phone, email, password, false);
 
 
-            /// proceed to create the user
+        /// proceed to create the user
         createUserInDatabase(user);
 
     }
 
 
     private void createUserInDatabase(User user) {
-        databaseService.createNewUser(user, new DatabaseService.DatabaseCallback<String>() {
+        databaseService.createNewUser(user, new DatabaseService.DatabaseCallback<String >() {
             @Override
             public void onCompleted(String uid) {
                 Log.d(TAG, "createUserInDatabase: User created successfully");
                 /// save the user to shared preferences
-                user.setId(uid);
                 Log.d(TAG, "createUserInDatabase: Redirecting to MainActivity");
-                String email = etEmail.getText().toString();
-                String password = etPassword.getText().toString();
+
+
+                user.setId(uid);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
 
                 editor.putString("email", email);
@@ -150,8 +149,9 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             }
         });
     }
-
-
-
-
 }
+
+
+
+
+

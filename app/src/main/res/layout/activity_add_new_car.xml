@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddNewCar">
+
+    <LinearLayout
+        android:layout_width="392dp"
+        android:layout_height="716dp"
+        android:orientation="vertical"
+        android:weightSum="10"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="18dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="749dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/etLicense"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:text="LicenseNumber" />
+
+            <Spinner
+                android:id="@+id/spBrand"
+                android:entries="@array/carBrandsArr"
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:id="@+id/etModel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Model" />
+
+            <Spinner
+                android:id="@+id/spColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/colorArr"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <Spinner
+                android:id="@+id/spYear"
+                android:layout_width="match_parent"
+                android:layout_height="29dp"
+                android:entries="@array/yearArr"
+                android:minHeight="48dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="41dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="119dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Price" />
+
+                <EditText
+                    android:id="@+id/etPrice"
+                    android:layout_width="269dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvKm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Kilometer" />
+
+                <EditText
+                    android:id="@+id/etKm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number" />
+
+
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/spHand"
+                android:entries="@array/hands"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:id="@+id/radiogroupgear"
+                android:layout_width="440dp"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/rBmanual"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="manual" />
+
+                <RadioButton
+                    android:id="@+id/rBautmatic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="autmatic" />
+            </RadioGroup>
+
+            <Spinner
+                android:id="@+id/spOwnership"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/previousOwnerTypeArr"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <Spinner
+                android:id="@+id/spGas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/fuelTypeArr"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="date untill test" />
+
+                <EditText
+                    android:id="@+id/etDatetilTest"
+                    android:layout_width="239dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="date" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="33dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvEngine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="EngineVolum" />
+
+                <EditText
+                    android:id="@+id/etEnginevolume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number" />
+
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/etEngine"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:text="Engine"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <LinearLayout
+                android:layout_width="381dp"
+                android:layout_height="77dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btncamara"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="add image from camara" />
+
+                <Button
+                    android:id="@+id/btnimagebrowse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="add image from browser" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnAdd"
+                android:layout_width="379dp"
+                android:layout_height="101dp"
+                android:text="Addcar" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

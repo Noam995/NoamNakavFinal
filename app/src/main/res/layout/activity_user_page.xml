@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserPage">
+
+    <TextView
+        android:id="@+id/tvUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="42dp"
+        android:text="דף משתמש"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btngotoCars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
+        android:text="לכל המכוניות"
+        android:onClick="searchcars"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvUser" />
+
+    <Button
+        android:id="@+id/btnSale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:layout_marginTop="45dp"
+        android:text="לרכישה"
+        app:layout_constraintStart_toStartOf="@+id/btngotoCars"
+        app:layout_constraintTop_toBottomOf="@+id/btngotoCars" />
+
+    <Button
+        android:id="@+id/btnMetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:text="לתאם פגישה"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSale" />
+
+    <Button
+        android:id="@+id/btnLogoutUser"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="49dp"
+        android:onClick="logootuser"
+        android:text="התנתקות"
+        app:layout_constraintStart_toStartOf="@+id/btnMetting"
+        app:layout_constraintTop_toBottomOf="@+id/btnMetting" />
+</androidx.constraintlayout.widget.ConstraintLayout>

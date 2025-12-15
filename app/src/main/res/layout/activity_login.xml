@@ -69,15 +69,16 @@
         android:id="@+id/registerText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:minHeight="48dp"
+        android:padding="8dp"
         android:text="אין לך חשבון? לחץ כאן להירשם"
         android:textColor="#3F51B5"
         android:textSize="14sp"
-        android:padding="8dp"
-        android:clickable="true"
-        android:foreground="?attr/selectableItemBackground"
-        app:layout_constraintTop_toBottomOf="@+id/loginBtn"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

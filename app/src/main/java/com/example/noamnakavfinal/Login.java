@@ -17,10 +17,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.example.noamnakavfinal.model.User;
 import com.example.noamnakavfinal.service.DatabaseService;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -29,12 +26,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private EditText etEmail, etPassword;
     private Button btnLogin;
     private TextView tvRegister;
-    private String email2;
-    private String pass2;
+
+
     private DatabaseService databaseService;
-    private FirebaseAuth mAuth;
+
     public static final String MyPREFERENCES="MyPrefs";
     SharedPreferences sharedPreferences;
+    private String password,email;
 
 
     @SuppressLint("MissingInflatedId")
@@ -52,21 +50,21 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
         databaseService = DatabaseService.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+
         sharedPreferences=getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         etEmail = findViewById(R.id.emailInput);
         etPassword = findViewById(R.id.passwordInput);
         btnLogin = findViewById(R.id.loginBtn);
         tvRegister = findViewById(R.id.registerText);
-        email2=sharedPreferences.getString("email","");
-        pass2=sharedPreferences.getString("password","");
+        email=sharedPreferences.getString("email","");
+        password=sharedPreferences.getString("password","");
 
         btnLogin.setOnClickListener(this);
         tvRegister.setOnClickListener(this);
 
-        etEmail.setText(email2);
-        etPassword.setText(pass2);
+        etEmail.setText(email);
+        etPassword.setText(password);
     }
 
     @Override
@@ -74,18 +72,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         int id = v.getId();
 
         if (id == btnLogin.getId()) {
-            String email = etEmail.getText().toString();
-            String password = etPassword.getText().toString();
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+             email = etEmail.getText().toString();
+             password = etPassword.getText().toString();
 
-            editor.putString("email", email);
-            editor.putString("password", password);
-
-            editor.commit();
 
 
             if (!checkInput(email, password)) {
-                return;
+         //       return;
             }
 
             loginUser(email, password);
@@ -114,42 +107,52 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void loginUser(String email, String password) {
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                        if (firebaseUser == null) {
-                            etPassword.setError("שגיאה בכניסה, נסה שוב");
-                            etPassword.requestFocus();
-                            return;
-                        }
-                        String uid = firebaseUser.getUid();
 
-                        databaseService.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
-                            @Override
-                            public void onCompleted(User user) {
-                                Log.d(TAG, "Login success, user: " + user.getId());
 
-                                Intent homepageIntent = new Intent(Login.this, MainActivity.class);
-                                homepageIntent.putExtra("USER_ID", user.getId());
-                                homepageIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(homepageIntent);
-                            }
 
-                            @Override
-                            public void onFailed(Exception e) {
-                                Log.e(TAG, "Failed to get user data", e);
-                                etPassword.setError("שגיאה בטעינת נתוני המשתמש");
-                                etPassword.requestFocus();
-                            }
-                        });
 
-                    } else {
-                        etPassword.setError("אימייל או סיסמה שגויים");
-                        etPassword.requestFocus();
-                        Log.e(TAG, "Login failed", task.getException());
-                    }
-                });
+        databaseService.loginUser(email, password, new DatabaseService.DatabaseCallback<String>() {
+            @Override
+            public void onCompleted(String uid) {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.putString("email", email);
+                editor.putString("password", password);
+
+                editor.commit();
+                Log.d(TAG, "Login: User logged successfully");
+
+                Intent go = new Intent(Login.this, UserPage.class);
+                startActivity(go);
+
+
+                if (email.equals("jhhj") && password.equals("hjjhj")) {
+
+
+                    Intent go1 = new Intent(Login.this, AdminPage.class);
+                    startActivity(go1);
+
+                } else
+
+                    {
+
+
+                    Intent go2 = new Intent(Login.this, UserPage.class);
+                     startActivity(go2);
+
+            }
+
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+                Log.d(TAG, "Login: Error:   "+e.toString());
+
+            }
+        });
+
+
     }
 }
 
