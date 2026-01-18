@@ -26,8 +26,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
+                android:hint="LicenseNumber"
                 android:inputType="text"
-                android:text="LicenseNumber" />
+                 />
 
             <Spinner
                 android:id="@+id/spBrand"
@@ -42,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="text"
-                android:text="Model" />
+                android:hint="Model" />
 
             <Spinner
                 android:id="@+id/spColor"
@@ -157,8 +158,8 @@
 
                 <EditText
                     android:id="@+id/etDatetilTest"
-                    android:layout_width="239dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="268dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:ems="10"
                     android:inputType="date" />

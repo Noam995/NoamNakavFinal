@@ -55,7 +55,12 @@ public class AdminPage extends AppCompatActivity {
         }
 
     public void gotoallUsers(View view) {
-        Intent go = new Intent(this,Alluserpage.class);
+        Intent go = new Intent(this,UserList.class);
         startActivity(go);
     }
+
+    ///public void gotoallUsers(View view) {
+     ///Intent go = new Intent(this,AllUserActivity.class);
+    ///  startActivity(go);
+  /// }
 }

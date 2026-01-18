@@ -1,6 +1,10 @@
 package com.example.noamnakavfinal.model;
 
-public class Car {
+import java.io.Serializable;
+
+public class Car implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     protected String id;
     protected String licenseCar;
     protected String brand;

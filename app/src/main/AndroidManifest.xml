@@ -12,13 +12,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NoamNakavFinal">
         <activity
+            android:name=".UserList"
+            android:exported="false" />
+        <activity
+            android:name=".UserDetails"
+            android:exported="false" />
+        <activity
+            android:name=".All_user_details"
+            android:exported="false" />
+        <activity
+            android:name=".Row_user"
+            android:exported="false" />
+        <activity
+            android:name=".AllUserPage"
+            android:exported="false" />
+        <activity
+            android:name=".Alluserpage"
+            android:exported="false" />
+        <activity
+            android:name=".Alluser"
+            android:exported="false" />
+        <activity
+            android:name=".AllUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".UserDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".CarDetailsActivity"
             android:exported="false" />
         <activity
             android:name=".SearchAllCars"
-            android:exported="false" />
-        <activity
-            android:name=".Alluserpage"
             android:exported="false" />
         <activity
             android:name=".AddNewCar"
