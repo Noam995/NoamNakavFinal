@@ -1,70 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_admin">
 
     <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- תמונת רכב -->
         <ImageView
             android:id="@+id/imgCar"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="220dp"
             android:scaleType="centerCrop"
+            android:background="@drawable/bg_image"
             android:layout_marginBottom="16dp"/>
 
+        <!-- שם הרכב -->
         <TextView
             android:id="@+id/tvTitle"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="BMW X5"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"/>
 
+        <!-- מחיר -->
         <TextView
             android:id="@+id/tvPrice"
-            android:textSize="18sp"
-            android:layout_marginBottom="4dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="₪ 180,000"
+            android:textColor="#FF9800"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
 
+        <!-- פרטי רכב -->
         <TextView
             android:id="@+id/tvYear"
+            android:textColor="#CCCCCC"
+            android:text="שנה:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvKm"
+            android:textColor="#CCCCCC"
+            android:text="ק״מ:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvEngine"
+            android:textColor="#CCCCCC"
+            android:text="מנוע:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvGear"
+            android:textColor="#CCCCCC"
+            android:text="גיר:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvGas"
+            android:textColor="#CCCCCC"
+            android:text="דלק:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvOwnership"
+            android:textColor="#CCCCCC"
+            android:text="בעלות קודמת:"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/tvDateTest"
+            android:textColor="#CCCCCC"
+            android:text="טסט עד:"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"/>
 
+        <!-- כפתור רכישה -->
+        <Button
+            android:id="@+id/btnPurchase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="לרכישה"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:background="@drawable/btn_primary"/>
     </LinearLayout>
 </ScrollView>
