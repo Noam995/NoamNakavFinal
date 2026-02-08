@@ -1,8 +1,10 @@
 package com.example.noamnakavfinal;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +17,8 @@ public class CarDetailsActivity extends AppCompatActivity {
 
     ImageView imgCar;
     TextView tvTitle, tvPrice, tvYear, tvKm, tvEngine, tvGear, tvGas, tvOwnership, tvDateTest;
+    Button btnPurchase;
+    Car car;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +35,9 @@ public class CarDetailsActivity extends AppCompatActivity {
         tvGas = findViewById(R.id.tvGas);
         tvOwnership = findViewById(R.id.tvOwnership);
         tvDateTest = findViewById(R.id.tvDateTest);
+        btnPurchase = findViewById(R.id.btnPurchase);
 
-        // קבלת האובייקט car מה Intent
-        Car car = (Car) getIntent().getSerializableExtra("car");
+        car = (Car) getIntent().getSerializableExtra("car");
 
         if (car != null) {
             tvTitle.setText(car.getBrand() + " " + car.getModel());
@@ -51,5 +55,11 @@ public class CarDetailsActivity extends AppCompatActivity {
                 imgCar.setImageBitmap(bitmap);
             }
         }
+
+        btnPurchase.setOnClickListener(v -> {
+            Intent intent = new Intent(CarDetailsActivity.this, PurchaseActivity.class);
+            intent.putExtra("car", car);
+            startActivity(intent);
+        });
     }
 }

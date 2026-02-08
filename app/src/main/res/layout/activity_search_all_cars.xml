@@ -1,15 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bg_admin"
+    android:padding="12dp">
 
-    <LinearLayout
-        android:id="@+id/carsContainer"
-        android:orientation="vertical"
+    <!-- ======= Toolbar ======= -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/bg_admin"
+        android:titleTextColor="#FFFFFF"
+        android:title="חיפוש רכבים" />
+
+    <!-- ======= שדה חיפוש ======= -->
+    <EditText
+        android:id="@+id/etSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"/>
+        android:hint="חיפוש לפי מותג, דגם או שנה"
+        android:inputType="text"
+        android:textDirection="rtl"
+        android:background="@color/white"
+        android:gravity="start"
+        android:layout_marginTop="12dp"
+        android:padding="12dp"/>
 
-</ScrollView>
+    <!-- ======= Spinner למיון ======= -->
+    <Spinner
+        android:id="@+id/spSort"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"/>
 
+    <!-- ======= RecyclerView – רשימת רכבים ======= -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvCars"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

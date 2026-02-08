@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">NoamNakavFinal</string>
+
+    <string-array name="sort_options">
+        <item>ללא מיון</item>
+        <item>מחיר: מהזול ליקר</item>
+        <item>מחיר: מהיקר לזול</item>
+        <item>ק״מ: מהנמוך לגבוה</item>
+        <item>ק״מ: מהגבוה לנמוך</item>
+    </string-array>
 </resources>

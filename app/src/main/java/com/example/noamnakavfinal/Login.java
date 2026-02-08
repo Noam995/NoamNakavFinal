@@ -122,11 +122,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 editor.commit();
                 Log.d(TAG, "Login: User logged successfully");
 
-                Intent go = new Intent(Login.this, UserPage.class);
-                startActivity(go);
 
 
-                if (email.equals("jhhj") && password.equals("hjjhj")) {
+
+                if (email.equals("noam123@gmail.com") && password.equals("1234567")) {
 
 
                     Intent go1 = new Intent(Login.this, AdminPage.class);

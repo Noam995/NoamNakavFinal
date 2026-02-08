@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:title="בית"
+        android:icon="@drawable/ic_home"/>
+
+    <item
+        android:id="@+id/nav_cars"
+        android:title="רכבים"
+        android:icon="@drawable/ic_car"/>
+
+    <item
+        android:id="@+id/nav_profile"
+        android:title="פרופיל"
+        android:icon="@drawable/ic_person"/>
+    <item
+        android:id="@+id/menu_about"
+        android:title="אודות"
+        android:icon="@drawable/ic_about"/>
+
+</menu>
