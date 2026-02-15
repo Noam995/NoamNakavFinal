@@ -6,10 +6,11 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -45,14 +46,16 @@ public class SearchAllCars extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_all_cars);
 
-        // ======= Toolbar =======
+        // ======= Toolbar (הכרחי כדי שהתפריט יופיע) =======
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // אתחול רכיבים
         rvCars = findViewById(R.id.rvCars);
         etSearch = findViewById(R.id.etSearch);
         spSort = findViewById(R.id.spSort);
 
+        // הגדרת RecyclerView
         rvCars.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarsAdapter(this, new ArrayList<>(), car -> {
             Intent intent = new Intent(this, CarDetailsActivity.class);
@@ -61,6 +64,7 @@ public class SearchAllCars extends AppCompatActivity {
         });
         rvCars.setAdapter(adapter);
 
+        // הגדרת הספינר (מיון)
         ArrayAdapter<CharSequence> sortAdapter =
                 ArrayAdapter.createFromResource(
                         this,
@@ -70,9 +74,11 @@ public class SearchAllCars extends AppCompatActivity {
                 android.R.layout.simple_spinner_dropdown_item);
         spSort.setAdapter(sortAdapter);
 
+        // טעינת נתונים
         databaseService = DatabaseService.getInstance();
         loadCars();
 
+        // האזנה לשינויים בתיבת החיפוש
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
@@ -83,9 +89,10 @@ public class SearchAllCars extends AppCompatActivity {
             }
         });
 
+        // האזנה לבחירה בספינר
         spSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, android.view.View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sortCars(position);
             }
 
@@ -94,14 +101,50 @@ public class SearchAllCars extends AppCompatActivity {
         });
     }
 
-    // ======= Menu (שלוש נקודות) =======
+    // ==========================================
+    //           טיפול בתפריט (Menu)
+    // ==========================================
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
+        if (id == R.id.nav_home) {
+            // מעבר למסך הבית (UserPage)
+            Intent intent = new Intent(this, UserPage.class);
+            startActivity(intent);
+            return true;
+        }
+        else if (id == R.id.nav_cars) {
+            // אנחנו כבר במסך רכבים
+            Toast.makeText(this, "אתה כבר צופה ברכבים", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else if (id == R.id.nav_profile) {
+            // מעבר לפרופיל
+            Intent intent = new Intent(this, UserDetailsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if (id == R.id.menu_about) {
+            // מעבר לאודות
+            Intent intent = new Intent(this, About.class);
+            startActivity(intent);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ==========================================
+    //           לוגיקה (טעינה, סינון, מיון)
+    // ==========================================
 
     private void loadCars() {
         databaseService.getCarList(new DatabaseService.DatabaseCallback<List<Car>>() {
@@ -109,6 +152,7 @@ public class SearchAllCars extends AppCompatActivity {
             public void onCompleted(List<Car> cars) {
                 allCars = cars;
                 currentList = new ArrayList<>(cars);
+                // עדכון ראשוני של הרשימה
                 adapter.updateList(currentList);
             }
 
@@ -121,6 +165,7 @@ public class SearchAllCars extends AppCompatActivity {
         });
     }
 
+    // פונקציית עזר לניקוי רווחים ותווים מיוחדים לצורך חיפוש
     private String normalize(String text) {
         if (text == null) return "";
         return text.replace("י","")
@@ -135,6 +180,7 @@ public class SearchAllCars extends AppCompatActivity {
         currentList.clear();
 
         for (Car car : allCars) {
+            // חיפוש לפי יצרן, דגם או שנה
             if (normalize(car.getBrand()).contains(nq) ||
                     normalize(car.getModel()).contains(nq) ||
                     car.getYear().contains(query)) {
@@ -142,30 +188,30 @@ public class SearchAllCars extends AppCompatActivity {
                 currentList.add(car);
             }
         }
-
+        // מיון הרשימה המסוננת לפי הבחירה הנוכחית בספינר
         sortCars(spSort.getSelectedItemPosition());
     }
 
     private void sortCars(int option) {
         switch (option) {
-            case 1:
+            case 1: // מחיר: נמוך לגבוה
                 Collections.sort(currentList,
                         Comparator.comparingDouble(Car::getPrice));
                 break;
-            case 2:
+            case 2: // מחיר: גבוה לנמוך
                 Collections.sort(currentList,
                         (a, b) -> Double.compare(b.getPrice(), a.getPrice()));
                 break;
-            case 3:
+            case 3: // ק"מ: נמוך לגבוה
                 Collections.sort(currentList,
                         Comparator.comparingDouble(Car::getKm));
                 break;
-            case 4:
+            case 4: // ק"מ: גבוה לנמוך
                 Collections.sort(currentList,
                         (a, b) -> Double.compare(b.getKm(), a.getKm()));
                 break;
         }
-
+        // עדכון המתאם (Adapter) להצגת הרשימה החדשה
         adapter.updateList(currentList);
     }
 }

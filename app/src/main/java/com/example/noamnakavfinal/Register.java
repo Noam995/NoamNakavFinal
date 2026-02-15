@@ -1,17 +1,9 @@
 package com.example.noamnakavfinal;
 
-
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.util.Log;
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -23,30 +15,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.noamnakavfinal.model.User;
 import com.example.noamnakavfinal.service.DatabaseService;
 
+public class Register extends AppCompatActivity {
 
-/// Activity for registering the user
-/// This activity is used to register the user
-/// It contains fields for the user to enter their information
-/// It also contains a button to register the user
-/// When the user is registered, they are redirected to the main activity
-public class Register extends AppCompatActivity implements View.OnClickListener {
-
-    private static final String TAG = "RegisterActivity";
-
-    private EditText etEmail, etPassword, etFName, etLName, etPhone;
-    private Button btnRegister;
-    private TextView tvLogin;
-    private DatabaseService databaseService;
-
-    public static final String MyPREFERENCES = "MyPrefs";
-    SharedPreferences sharedPreferences;
-    private String email,password;
+    EditText etFname, etLname, etEmail, etPassword, etPhone;
+    DatabaseService db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        /// set the layout for the activity
         setContentView(R.layout.activity_register);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -54,104 +31,56 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             return insets;
         });
 
-        databaseService = DatabaseService.getInstance();
+        db = DatabaseService.getInstance();
 
-        /// get the views
+        etFname = findViewById(R.id.etFname);
+        etLname = findViewById(R.id.etLname);
         etEmail = findViewById(R.id.etemail);
         etPassword = findViewById(R.id.etpassword);
-        etFName = findViewById(R.id.etFname);
-        etLName = findViewById(R.id.etLname);
         etPhone = findViewById(R.id.etphone);
-        btnRegister = findViewById(R.id.btnSubmit);
-        tvLogin = findViewById(R.id.tvLogin);
-
-        /// set the click listener
-        btnRegister.setOnClickListener(this);
-        tvLogin.setOnClickListener(this);
-        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
-
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == btnRegister.getId()) {
-            Log.d(TAG, "onClick: Register button clicked");
+    public void submit(View view) {
+        String fname = etFname.getText().toString();
+        String lname = etLname.getText().toString();
+        String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
+        String phone = etPhone.getText().toString();
 
-            /// get the input from the user
-
-             email = etEmail.getText().toString();
-             password = etPassword.getText().toString();
-            String fName = etFName.getText().toString();
-            String lName = etLName.getText().toString();
-            String phone = etPhone.getText().toString();
-
-
-            Log.d(TAG, "onClick: Registering user...");
-
-            /// Register user
-            registerUser(fName, lName, phone, email, password);
-        } else if (v.getId() == tvLogin.getId()) {
-            /// Navigate back to Login Activity
-            finish();
+        // בדיקת תקינות בסיסית
+        if(fname.isEmpty() || lname.isEmpty() || email.isEmpty() || password.isEmpty() || phone.isEmpty()) {
+            Toast.makeText(this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
 
+        User user = new User(null, fname, lname, phone, email, password, false);
 
-    /// Register the user
-    private void registerUser(String fname, String lname, String phone, String email, String password) {
-        Log.d(TAG, "registerUser: Registering user...");
-
-
-        /// create a new user object
-
-
-        User user = new User("fdf", fname, lname, phone, email, password, false);
-
-
-        /// proceed to create the user
-        createUserInDatabase(user);
-
-    }
-
-
-    private void createUserInDatabase(User user) {
-        databaseService.createNewUser(user, new DatabaseService.DatabaseCallback<String >() {
+        db.createNewUser(user, new DatabaseService.DatabaseCallback<String>() {
             @Override
             public void onCompleted(String uid) {
-                Log.d(TAG, "createUserInDatabase: User created successfully");
-                /// save the user to shared preferences
-                Log.d(TAG, "createUserInDatabase: Redirecting to MainActivity");
+                // הודעת הצלחה
+                Toast.makeText(Register.this, "נרשמת והתחברת בהצלחה!", Toast.LENGTH_SHORT).show();
 
+                // --- השינוי כאן: מעבר ישיר ל-UserPage ---
+                Intent intent = new Intent(Register.this, UserPage.class);
 
-                user.setId(uid);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+                // ניקוי ההיסטוריה כדי שהמשתמש לא יוכל לחזור למסך ההרשמה בלחיצה על 'חזור'
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-                editor.putString("email", email);
-                editor.putString("password", password);
-
-                editor.commit();
-
-                /// Redirect to MainActivity and clear back stack to prevent user from going back to register screen
-                Intent mainIntent = new Intent(Register.this, MainActivity.class);
-                /// clear the back stack (clear history) and start the MainActivity
-                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(mainIntent);
+                startActivity(intent);
+                finish();
             }
 
             @Override
             public void onFailed(Exception e) {
-                Log.e(TAG, "createUserInDatabase: Failed to create user", e);
-                /// show error message to user
-                Toast.makeText(Register.this, "Failed to register user", Toast.LENGTH_SHORT).show();
-                /// sign out the user if failed to register
-
+                Toast.makeText(Register.this, "שגיאה בהרשמה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    public void mainactivity(View view) {
+        // כפתור חזרה למסך התחברות (במקרה וכבר יש משתמש)
+        Intent intent = new Intent(this, Login.class);
+        startActivity(intent);
+    }
 }
-
-
-
-
-
