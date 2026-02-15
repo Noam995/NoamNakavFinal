@@ -17,6 +17,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.noamnakavfinal.model.Car;
+import com.example.noamnakavfinal.model.Sale;
 import com.example.noamnakavfinal.model.User;
 import com.example.noamnakavfinal.service.DatabaseService;
 import com.google.firebase.auth.FirebaseAuth;
@@ -98,41 +99,60 @@ public class PurchaseActivity extends AppCompatActivity {
         // --- לוגיקת כפתור רכישה (כולל מחיקת הרכב) ---
         btnConfirmPurchase.setOnClickListener(v -> {
             // 1. בדיקת תקינות שדות
-            if (etIdNumber.getText().toString().isEmpty() ||
-                    etCardNumber.getText().toString().isEmpty() ||
-                    etCardExpiry.getText().toString().isEmpty() ||
-                    etCvv.getText().toString().isEmpty()) {
+            String idNum = etIdNumber.getText().toString().trim();
+            String cardNum = etCardNumber.getText().toString().trim();
+            String expiry = etCardExpiry.getText().toString().trim();
+            String cvv = etCvv.getText().toString().trim();
 
-                Toast.makeText(this, "אנא מלא את כל השדות", Toast.LENGTH_SHORT).show();
+            if (idNum.isEmpty() || cardNum.isEmpty() || expiry.isEmpty() || cvv.isEmpty()) {
+                Toast.makeText(this, "אנא מלא את כל פרטי התשלום", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // 2. ביצוע מחיקת הרכב מהמאגר לאחר אישור הפרטים
-            if (currentCar != null && currentCar.getId() != null) {
-                // נטרול הכפתור למניעת לחיצות כפולות
-                btnConfirmPurchase.setEnabled(false);
-                Toast.makeText(this, "מבצע רכישה...", Toast.LENGTH_SHORT).show();
+            // 2. קבלת המשתמש המחובר והרכב שנבחר
 
-                db.deleteCar(currentCar.getId(), new DatabaseService.DatabaseCallback<Void>() {
+            Car car = (Car) getIntent().getSerializableExtra("car");
+
+            if (mAuth.getCurrentUser() != null && car != null) {
+                String uid = mAuth.getCurrentUser().getUid();
+
+                // 3. שליפת פרטי המשתמש המלאים מהדאטהבייס כדי ליצור אובייקט Sale מלא
+                db.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
                     @Override
-                    public void onCompleted(Void object) {
-                        // הצלחה
-                        Toast.makeText(PurchaseActivity.this, "הרכישה בוצעה בהצלחה! הרכב הוסר מהמאגר.", Toast.LENGTH_LONG).show();
-                        finish(); // סגירת המסך
+                    public void onCompleted(User user) {
+                        // יצירת תאריך נוכחי
+                        String currentDate = new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm",
+                                java.util.Locale.getDefault()).format(new java.util.Date());
+
+                        // יצירת אובייקט המכירה (saleId ייווצר בתוך DatabaseService)
+                        Sale newSale = new Sale(null, car, user, currentDate, car.getPrice());
+
+                        // 4. שמירה להיסטוריית הרכישות (sales)
+                        db.createNewSale(newSale, new DatabaseService.DatabaseCallback<Void>() {
+                            @Override
+                            public void onCompleted(Void unused) {
+                                Toast.makeText(PurchaseActivity.this,
+                                        "הרכישה בוצעה בהצלחה ונשמרה בהיסטוריה!", Toast.LENGTH_LONG).show();
+                                finish(); // סגירת המסך וחזרה אחורה
+                            }
+
+                            @Override
+                            public void onFailed(Exception e) {
+                                Toast.makeText(PurchaseActivity.this,
+                                        "שגיאה בשמירת הרכישה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
 
                     @Override
                     public void onFailed(Exception e) {
-                        // כישלון
-                        btnConfirmPurchase.setEnabled(true);
-                        Toast.makeText(PurchaseActivity.this, "שגיאה בביצוע הרכישה: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PurchaseActivity.this, "שגיאה בזיהוי המשתמש", Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-                Toast.makeText(this, "שגיאה בזיהוי הרכב", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "משתמש לא מחובר או רכב לא נמצא", Toast.LENGTH_SHORT).show();
             }
         });
-
         // --- לוגיקת כפתור יצירת פגישה (יומן + SMS) ---
         btnCreateMeeting.setOnClickListener(v -> showDateTimePicker());
     }

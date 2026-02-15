@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 
 import com.example.noamnakavfinal.model.Car;
+import com.example.noamnakavfinal.model.Sale;
 import com.example.noamnakavfinal.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +16,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -38,6 +40,7 @@ public class DatabaseService {
     /// @see DatabaseService#readData(String)
     private static final String USERS_PATH = "users",
                                 CARS_PATH = "cars";
+    private static final String SALES_PATH = "sales";
                               
 
     /// callback interface for database operations
@@ -444,6 +447,34 @@ public class DatabaseService {
 
     // region cart section
 
+    public void createNewSale(@NotNull final Sale sale, @Nullable final DatabaseCallback<Void> callback) {
+        // יצירת מזהה ייחודי למכירה
+        String saleId = databaseReference.child(SALES_PATH).push().getKey();
+        sale.setSaleId(saleId);
 
+        // שמירה למסד הנתונים תחת הנתיב sales/saleId
+        writeData(SALES_PATH + "/" + saleId, sale, callback);
+    }
+
+    public void getAllSales(@NotNull final DatabaseCallback<List<Sale>> callback) {
+        databaseReference.child(SALES_PATH).addListenerForSingleValueEvent(new  ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<Sale> salesList = new ArrayList<>();
+                for (DataSnapshot data : snapshot.getChildren()) {
+                    Sale sale = data.getValue(Sale.class);
+                    if (sale != null) {
+                        salesList.add(sale);
+                    }
+                }
+                callback.onCompleted(salesList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                callback.onFailed(error.toException());
+            }
+        });
+    }
 
 }

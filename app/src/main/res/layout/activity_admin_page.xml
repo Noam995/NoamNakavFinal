@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:text="היסטוריית רכישות"
         android:textColor="#FFFFFF"
+        android:onClick="salehistory"
         android:background="@drawable/btn_primary"
         app:layout_constraintTop_toBottomOf="@id/tvAdmin"
         app:layout_constraintStart_toStartOf="parent"
