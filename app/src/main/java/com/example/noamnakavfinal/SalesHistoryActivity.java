@@ -19,27 +19,36 @@ public class SalesHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales_history);
 
-        rvSales = findViewById(R.id.rvSales);
-        rvSales.setLayoutManager(new LinearLayoutManager(this));
-        db = DatabaseService.getInstance();
+        // אתחול ה-RecyclerView
+        rvSales = findViewById(R.id.rvSalesHistory);
+        if (rvSales != null) {
+            rvSales.setLayoutManager(new LinearLayoutManager(this));
+        }
 
-        loadSalesHistory();
+        db = DatabaseService.getInstance();
+        loadHistory();
     }
 
-    private void loadSalesHistory() {
-        // קריאה לפונקציה שמוסיפים ל-DatabaseService (הסבר למטה)
+    private void loadHistory() {
         db.getAllSales(new DatabaseService.DatabaseCallback<List<Sale>>() {
             @Override
             public void onCompleted(List<Sale> sales) {
-                if (sales != null) {
-                    SalesAdapter adapter = new SalesAdapter(sales);
-                    rvSales.setAdapter(adapter);
-                }
+                // חייבים לעדכן את ה-UI על ה-Main Thread
+                runOnUiThread(() -> {
+                    if (sales != null && !sales.isEmpty()) {
+                        SalesAdapter adapter = new SalesAdapter(sales);
+                        rvSales.setAdapter(adapter);
+                    } else {
+                        Toast.makeText(SalesHistoryActivity.this, "אין היסטוריית רכישות", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(SalesHistoryActivity.this, "שגיאה בטעינת היסטוריה", Toast.LENGTH_SHORT).show();
+                runOnUiThread(() ->
+                        Toast.makeText(SalesHistoryActivity.this, "שגיאה: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
             }
         });
     }
