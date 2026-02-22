@@ -3,8 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFD5D5">
@@ -48,7 +46,6 @@
                 android:layout_height="140dp"
                 android:layout_gravity="center"
                 android:src="@drawable/logo"
-
                 android:contentDescription="App Logo"
                 android:padding="10dp"/>
 
@@ -95,6 +92,17 @@
                 android:textSize="16sp"
                 android:textColor="@color/black"
                 android:paddingBottom="20dp"/>
+
+            <Button
+                android:id="@+id/btnNavigate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="נווט לסוכנות שלנו 🗺️"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#000000"
+                android:onClick="navigateToDealership"
+                android:padding="12dp"
+                android:layout_marginBottom="20dp"/>
 
         </LinearLayout>
     </ScrollView>

@@ -69,4 +69,8 @@ public class AdminPage extends AppCompatActivity {
      Intent go = new Intent(this,SalesHistoryActivity.class);
       startActivity(go);
   }
+    public void gotoMeetings(View view) {
+        Intent intent = new Intent(this, AdminMeetingsActivity.class);
+        startActivity(intent);
+    }
 }

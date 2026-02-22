@@ -1,11 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArrangeMeeting">
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:id="@+id/main">
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="קביעת פגישה חדשה"
+      android:textSize="24sp"
+      android:textStyle="bold"
+      android:layout_marginBottom="32dp"/>
+
+  <EditText
+      android:id="@+id/etDate"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="תאריך (לדוגמה: 20/05/2026)"
+      android:layout_marginBottom="16dp"/>
+
+  <EditText
+      android:id="@+id/etTime"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="שעה (לדוגמה: 14:30)"
+      android:layout_marginBottom="32dp"/>
+
+  <Button
+      android:id="@+id/btnSaveMeeting"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="שמור פגישה"
+      android:backgroundTint="#000000"
+      android:textColor="#FFFFFF"/>
+
+</LinearLayout>

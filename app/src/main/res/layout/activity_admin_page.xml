@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/main"
-
     android:background="@drawable/bg_admin">
 
     <TextView
@@ -77,6 +76,20 @@
         android:layout_marginTop="16dp"/>
 
     <Button
+        android:id="@+id/btnViewMeetings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="צפה בפגישות"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_primary"
+        android:onClick="gotoMeetings"
+        app:layout_constraintTop_toBottomOf="@id/btnUsers"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="16dp"/>
+
+    <Button
         android:id="@+id/btnLogoutAdmin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -87,4 +100,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="20dp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

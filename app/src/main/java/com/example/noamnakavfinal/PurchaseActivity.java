@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.noamnakavfinal.model.Car;
+import com.example.noamnakavfinal.model.Meeting; // הוספנו את המודל של הפגישה
 import com.example.noamnakavfinal.model.Sale;
 import com.example.noamnakavfinal.model.User;
 import com.example.noamnakavfinal.service.DatabaseService;
@@ -45,7 +46,11 @@ public class PurchaseActivity extends AppCompatActivity {
     // משתנים לשמירת נתונים זמניים
     private int selectedInstallments = 1;
     private double monthlyPayment = 0;
+
+    // משתנים לשמירת נתוני הפגישה
     private String pendingMeetingTime = "";
+    private String pendingDate = "";
+    private String pendingTimeStr = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +122,13 @@ public class PurchaseActivity extends AppCompatActivity {
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, hourOfDay, minute1) -> {
-                    pendingMeetingTime = String.format(Locale.getDefault(), "%02d/%02d/%d בשעה %02d:%02d",
-                            day, month + 1, year, hourOfDay, minute1);
+                    // פיצול התאריך והשעה כדי שנוכל לשמור אותם מסודר במודל הפגישה
+                    pendingDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month + 1, year);
+                    pendingTimeStr = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute1);
+
+                    // משתנה שמשלב את שניהם בשביל הודעת ה-SMS
+                    pendingMeetingTime = pendingDate + " בשעה " + pendingTimeStr;
+
                     checkMeetingPermissionAndProceed();
                 }, hour, minute, true);
         timePickerDialog.show();
@@ -140,14 +150,30 @@ public class PurchaseActivity extends AppCompatActivity {
         db.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
-                String msg = "היי " + user.getFname() + ", נקבעה לך פגישה לתאריך " + pendingMeetingTime +
-                        " בקשר לרכב מסוג " + currentCar.getBrand() + " " + currentCar.getModel() + ". נתראה!";
+                // 1. יצירת מזהה ואובייקט פגישה
+                String meetingId = db.generateMeetingId();
+                Meeting meeting = new Meeting(meetingId, user.getEmail(), pendingDate, pendingTimeStr);
 
-                if (user.getPhone() != null && !user.getPhone().isEmpty()) {
-                    sendSmsToUser(user.getPhone(), msg);
-                }
+                // 2. שמירת הפגישה בדאטה בייס (כדי שהמנהל יראה אותה)
+                db.createNewMeeting(meeting, new DatabaseService.DatabaseCallback<Void>() {
+                    @Override
+                    public void onCompleted(Void object) {
+                        // 3. רק לאחר השמירה בהצלחה, נשלח את ה-SMS
+                        String msg = "היי " + user.getFname() + ", נקבעה לך פגישה לתאריך " + pendingMeetingTime +
+                                " בקשר לרכב מסוג " + currentCar.getBrand() + " " + currentCar.getModel() + ". נתראה!";
 
-                Toast.makeText(PurchaseActivity.this, "הפגישה נקבעה ו-SMS נשלח!", Toast.LENGTH_LONG).show();
+                        if (user.getPhone() != null && !user.getPhone().isEmpty()) {
+                            sendSmsToUser(user.getPhone(), msg);
+                        }
+
+                        Toast.makeText(PurchaseActivity.this, "הפגישה נשמרה בהצלחה ו-SMS נשלח!", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(PurchaseActivity.this, "שגיאה בשמירת הפגישה במסד הנתונים", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override

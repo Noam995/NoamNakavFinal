@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 
 
 import com.example.noamnakavfinal.model.Car;
+import com.example.noamnakavfinal.model.Meeting;
 import com.example.noamnakavfinal.model.Sale;
 import com.example.noamnakavfinal.model.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,8 +40,9 @@ public class DatabaseService {
     /// paths for different data types in the database
     /// @see DatabaseService#readData(String)
     private static final String USERS_PATH = "users",
-                                CARS_PATH = "cars";
-    private static final String SALES_PATH = "sales";
+                                CARS_PATH = "cars",
+                                SALES_PATH = "sales",
+                                MEETINGS_PATH = "meetings";
                               
 
     /// callback interface for database operations
@@ -477,4 +479,26 @@ public class DatabaseService {
         });
     }
 
+    // region Meeting Section
+
+    /// generate a new id for a new meeting in the database
+    /// @return a new id for the meeting
+    public String generateMeetingId() {
+        return generateNewId(MEETINGS_PATH);
+    }
+
+    /// create a new meeting in the database
+    /// @param meeting the meeting object to create
+    /// @param callback the callback to call when the operation is completed
+    public void createNewMeeting(@NotNull final Meeting meeting, @Nullable final DatabaseCallback<Void> callback) {
+        writeData(MEETINGS_PATH + "/" + meeting.getMeetingId(), meeting, callback);
+    }
+
+    /// get all the meetings from the database
+    /// @param callback the callback to call when the operation is completed
+    public void getMeetingList(@NotNull final DatabaseCallback<List<Meeting>> callback) {
+        getDataList(MEETINGS_PATH, Meeting.class, callback);
+    }
+
+    // endregion Meeting Section
 }
