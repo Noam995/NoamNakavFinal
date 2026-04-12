@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:text="עדכון פרטי רכב"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#1F3A5F"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <EditText android:id="@+id/etLicense" android:hint="מספר רישוי" android:background="@drawable/bg_input" android:padding="12dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spBrand" android:entries="@array/carBrandsArr" android:background="@drawable/bg_input" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etModel" android:hint="דגם" android:background="@drawable/bg_input" android:padding="12dp" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <LinearLayout android:orientation="horizontal" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <Spinner android:id="@+id/spColor" android:entries="@array/colorArr" android:background="@drawable/bg_input" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+            <Spinner android:id="@+id/spYear" android:entries="@array/yearArr" android:background="@drawable/bg_input" android:layout_marginStart="8dp" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <EditText android:id="@+id/etPrice" android:hint="מחיר (₪)" android:inputType="numberDecimal" android:background="@drawable/bg_input" android:padding="12dp" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etKm" android:hint="קילומטראז" android:inputType="numberDecimal" android:background="@drawable/bg_input" android:padding="12dp" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spHand" android:entries="@array/hands" android:background="@drawable/bg_input" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <RadioGroup android:id="@+id/radiogroupgear" android:layout_marginTop="8dp" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <RadioButton android:id="@+id/rBmanual" android:text="ידני" android:textColor="#1F3A5F" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <RadioButton android:id="@+id/rBautmatic" android:text="אוטומטי" android:textColor="#1F3A5F" android:layout_marginStart="16dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        </RadioGroup>
+
+        <Spinner android:id="@+id/spOwnership" android:entries="@array/previousOwnerTypeArr" android:background="@drawable/bg_input" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <Spinner android:id="@+id/spGas" android:entries="@array/fuelTypeArr" android:background="@drawable/bg_input" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <EditText android:id="@+id/etDatetilTest" android:hint="תוקף טסט" android:background="@drawable/bg_input" android:padding="12dp" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etEnginevolume" android:hint="נפח מנוע" android:inputType="numberDecimal" android:background="@drawable/bg_input" android:padding="12dp" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+        <EditText android:id="@+id/etEngine" android:hint="סוג מנוע" android:background="@drawable/bg_input" android:padding="12dp" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+        <ImageView android:id="@+id/imageView" android:layout_marginTop="12dp" android:layout_width="match_parent" android:layout_height="180dp" android:scaleType="centerCrop" android:background="#DDE3EA"/>
+
+        <LinearLayout android:orientation="horizontal" android:layout_marginTop="8dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+            <Button android:id="@+id/btncamara" android:text="📷 מצלמה" android:backgroundTint="#3A6EA5" android:textColor="#FFFFFF" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+            <Button android:id="@+id/btnimagebrowse" android:text="🖼 גלריה" android:backgroundTint="#3A6EA5" android:textColor="#FFFFFF" android:layout_marginStart="8dp" android:layout_weight="1" android:layout_width="0dp" android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnUpdate"
+            android:text="שמור שינויים"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:backgroundTint="#2E7D32"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"/>
+
+    </LinearLayout>
+</ScrollView>

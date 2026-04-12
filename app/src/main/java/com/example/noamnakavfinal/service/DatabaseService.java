@@ -445,6 +445,13 @@ public class DatabaseService {
         deleteData(CARS_PATH + "/" + carId, callback);
     }
 
+    public void updateCar(Car updatedCar, DatabaseCallback<Void> callback) {
+        // דורס את המידע הישן עם המידע החדש לפי אותו ID
+        databaseReference.child("cars").child(updatedCar.getId()).setValue(updatedCar)
+                .addOnSuccessListener(aVoid -> callback.onCompleted(null))
+                .addOnFailureListener(callback::onFailed);
+    }
+
     // endregion car section
 
     // region cart section

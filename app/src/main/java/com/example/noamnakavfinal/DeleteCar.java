@@ -29,7 +29,7 @@ public class DeleteCar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_car);
 
-        // קישור ל-LinearLayout
+        // קישור ל-LinearLayout ב-XML
         carsContainer = findViewById(R.id.carsContainer);
         databaseService = DatabaseService.getInstance();
 
@@ -54,14 +54,14 @@ public class DeleteCar extends AppCompatActivity {
                     price.setText("₪ " + car.getPrice());
                     year.setText("שנה: " + car.getYear());
 
-                    if (car.getImage64() != null) {
+                    if (car.getImage64() != null && !car.getImage64().isEmpty()) {
                         Bitmap bitmap = ImageUtil.convertFrom64base(car.getImage64());
                         img.setImageBitmap(bitmap);
                     }
 
-                    // לחיצה רגילה – מעבר לפרטי רכב
+                    // לחיצה רגילה – מעבר לדף העדכון (UpdateCar)
                     card.setOnClickListener(v -> {
-                        Intent intent = new Intent(DeleteCar.this, CarDetailsActivity.class);
+                        Intent intent = new Intent(DeleteCar.this, UpdateCar.class);
                         intent.putExtra("car", (Serializable) car);
                         startActivity(intent);
                     });
@@ -78,9 +78,7 @@ public class DeleteCar extends AppCompatActivity {
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(DeleteCar.this,
-                        "שגיאה בטעינת רכבים",
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(DeleteCar.this, "שגיאה בטעינת רכבים", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -99,16 +97,21 @@ public class DeleteCar extends AppCompatActivity {
         databaseService.deleteCar(car.getId(), new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void object) {
-                Toast.makeText(DeleteCar.this,
-                        "הרכב נמחק בהצלחה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DeleteCar.this, "הרכב נמחק בהצלחה", Toast.LENGTH_SHORT).show();
                 loadCars(); // ריענון הרשימה
             }
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(DeleteCar.this,
-                        "שגיאה במחיקת הרכב", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DeleteCar.this, "שגיאה במחיקת הרכב", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // רענון הרשימה כאשר המנהל חוזר מדף ה"עריכה" (UpdateCar)
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadCars();
     }
 }

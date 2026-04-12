@@ -32,18 +32,20 @@ public class UserList extends AppCompatActivity {
         adapter = new UserAdapter(userList, this);
         rvUsers.setAdapter(adapter);
 
-        // טעינת המשתמשים מה־Firebase
         DatabaseService.getInstance().getUserList(new DatabaseService.DatabaseCallback<List<User>>() {
             @Override
             public void onCompleted(List<User> object) {
                 userList.clear();
                 userList.addAll(object);
                 adapter.notifyDataSetChanged();
+
+                // הוספתי את השורה הזו כדי שנקבל הודעה למסך כמה משתמשים נטענו
+                Toast.makeText(UserList.this, "נטענו " + userList.size() + " משתמשים", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(UserList.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(UserList.this, "שגיאה בטעינה: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

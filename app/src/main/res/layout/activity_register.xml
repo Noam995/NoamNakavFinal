@@ -5,178 +5,119 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Register">
-    <LinearLayout
+    android:background="@drawable/bg_admin"
+    tools:context=".MainActivity">
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
 
             <TextView
-                android:id="@+id/textTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="71dp"
-                android:layout_marginBottom="40dp"
-                android:gravity="center"
-                android:text="נא למלא את הפרטים"
-                android:textSize="36sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="horizontal">
-
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="יצירת משתמש חדש"
+                android:textAlignment="center"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginBottom="24dp"/>
 
             <EditText
                 android:id="@+id/etFname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="First Name"
-                android:inputType="text"
-                android:minHeight="48dp"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="30dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="שם פרטי"
+                android:background="@drawable/bg_input"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="12dp"/>
 
             <EditText
                 android:id="@+id/etLname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Last Name"
-                android:inputType="text"
-
-                android:minHeight="48dp"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="97dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="שם משפחה"
+                android:background="@drawable/bg_input"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="12dp"/>
 
             <EditText
                 android:id="@+id/etemail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="email"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="אימייל"
                 android:inputType="textEmailAddress"
-                android:minHeight="48dp"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="165dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="horizontal">
+                android:background="@drawable/bg_input"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="12dp"/>
 
             <EditText
                 android:id="@+id/etphone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="phone"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="מספר טלפון"
                 android:inputType="phone"
-                android:minHeight="48dp"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="241dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:orientation="horizontal">
+                android:background="@drawable/bg_input"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="12dp"/>
 
             <EditText
                 android:id="@+id/etpassword"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="password"
-                android:inputType="phone"
-                android:minHeight="48dp"
-                tools:layout_editor_absoluteX="82dp"
-                tools:layout_editor_absoluteY="241dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
-
-
-            <TextView
-                android:id="@+id/tvLogin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="TextView" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="4"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:hint="סיסמה"
+                android:inputType="textPassword"
+                android:background="@drawable/bg_input"
+                android:paddingStart="16dp"
+                android:layout_marginBottom="24dp"/>
 
             <Button
                 android:id="@+id/btnSubmit"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:text="הירשם והתחבר"
+                android:backgroundTint="@color/black"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                app:cornerRadius="10dp"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView
+                android:id="@+id/tvLogin"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="submit"
-                tools:layout_editor_absoluteX="165dp"
-                tools:layout_editor_absoluteY="498dp" />
+                android:text="כבר יש לך חשבון? התחבר כאן"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textStyle="italic"
+                android:padding="8dp"/>
+
+            <Button
+                android:id="@+id/btnBackToMain"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:textSize="10sp"
+                android:text="חזרה למסך הראשי"
+                android:textColor="#1F3A5F"
+                app:strokeColor="#1F3A5F"
+                android:onClick="main"
+                android:layout_marginHorizontal="40dp"
+                android:layout_marginBottom="24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
         </LinearLayout>
-
-    </LinearLayout>
-
-
-
-
-
-
-
-
-
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

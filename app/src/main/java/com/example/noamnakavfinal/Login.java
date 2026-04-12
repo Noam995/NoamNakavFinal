@@ -105,7 +105,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         return true;
     }
-
+    public void main(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     private void loginUser(String email, String password) {
 
 

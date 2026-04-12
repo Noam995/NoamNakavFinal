@@ -3,34 +3,45 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/main_user_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_admin"
     tools:context=".UserPage">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#1F3A5F"
+        app:titleTextColor="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/tvUser"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:text="דף משתמש"
         android:textColor="#FFFFFF"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/btngotoCars"
         android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="50dp"
         android:text="לכל המכוניות"
         android:onClick="searchcars"
         android:background="@drawable/btn_primary"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/tvUser"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -38,11 +49,13 @@
     <Button
         android:id="@+id/btnSale"
         android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginTop="20dp"
-        android:text="לרכישה"
+        android:text="היסטוריית רכישות"
+        android:onClick="goToPurchases"
         android:background="@drawable/btn_primary"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/btngotoCars"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -50,11 +63,13 @@
     <Button
         android:id="@+id/btnMetting"
         android:layout_width="260dp"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginTop="20dp"
         android:text="לתאם פגישה"
+        android:onClick="arrangeMeeting"
         android:background="@drawable/btn_primary"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/btnSale"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -62,12 +77,13 @@
     <Button
         android:id="@+id/btnLogoutUser"
         android:layout_width="260dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="40dp"
         android:onClick="logootuser"
         android:text="התנתקות"
         android:background="@drawable/btn_primary"
         android:textColor="#FFFFFF"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/btnMetting"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

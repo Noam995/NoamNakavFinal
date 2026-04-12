@@ -3,12 +3,11 @@
     android:id="@+id/mainScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_admin">
+    android:background="#F5F7FA"> <LinearLayout
+    android:id="@+id/carsContainer"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"/>
 
-    <LinearLayout
-        android:id="@+id/carsContainer"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp"/>
 </ScrollView>
