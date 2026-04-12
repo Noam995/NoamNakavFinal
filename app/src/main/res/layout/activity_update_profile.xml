@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1F3A5F"
+            app:title="עדכון פרטים"
+            app:titleTextColor="#FFFFFF"
+            app:titleCentered="true"/>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="הפרטים שלך"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="#1F3A5F"
+                android:layout_marginBottom="20dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="אימייל (לא ניתן לשינוי)"
+                android:layout_marginBottom="5dp"
+                android:textColor="#444444"/>
+            <EditText
+                android:id="@+id/etUpdateEmail"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/bg_input"
+                android:padding="15dp"
+                android:enabled="false"
+                android:layout_marginBottom="15dp"
+                android:inputType="textEmailAddress"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="שם פרטי"
+                android:layout_marginBottom="5dp"
+                android:textColor="#444444"/>
+            <EditText
+                android:id="@+id/etUpdateName"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/bg_input"
+                android:padding="15dp"
+                android:layout_marginBottom="15dp"
+                android:inputType="textPersonName"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="מספר טלפון"
+                android:layout_marginBottom="5dp"
+                android:textColor="#444444"/>
+            <EditText
+                android:id="@+id/etUpdatePhone"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/bg_input"
+                android:padding="15dp"
+                android:layout_marginBottom="30dp"
+                android:inputType="phone"/>
+
+            <Button
+                android:id="@+id/btnSaveProfile"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="שמור שינויים"
+                android:backgroundTint="#3A6EA5"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"/>
+
+            <ProgressBar
+                android:id="@+id/pbUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

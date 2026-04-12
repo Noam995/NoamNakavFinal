@@ -128,7 +128,7 @@ public class SearchAllCars extends AppCompatActivity {
         }
         else if (id == R.id.nav_profile) {
             // מעבר לפרופיל
-            Intent intent = new Intent(this, UserDetailsActivity.class);
+            Intent intent = new Intent(this, UpdateProfileActivity.class);
             startActivity(intent);
             return true;
         }

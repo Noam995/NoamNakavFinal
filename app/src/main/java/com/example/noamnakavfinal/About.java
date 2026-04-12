@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -34,11 +35,22 @@ public class About extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
+        // הגדרת ריפוד למניעת חפיפה עם שורות המערכת
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_about), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // --- לוגיקת הסתרת כפתורים למשתמש שלא מחובר ---
+        Button btnNavigate = findViewById(R.id.btnNavigate);
+        Button btnMainPage = findViewById(R.id.btnMainPage);
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            // אם המשתמש לא מחובר, נסתיר את הכפתורים מהמסך
+            if (btnNavigate != null) btnNavigate.setVisibility(View.GONE);
+            if (btnMainPage != null) btnMainPage.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -46,12 +58,13 @@ public class About extends AppCompatActivity {
         // טעינת התפריט
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        // בדיקה: אם המשתמש לא מחובר, נסתיר את הפריטים הלא רלוונטיים
+        // בדיקה: אם המשתמש לא מחובר, נסתיר את כל אפשרויות התפריט
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            // מסתיר את "רכבים" ו"פרופיל" מהתפריט שלך
+            MenuItem home = menu.findItem(R.id.nav_home);
             MenuItem cars = menu.findItem(R.id.nav_cars);
             MenuItem profile = menu.findItem(R.id.nav_profile);
 
+            if (home != null) home.setVisible(false);
             if (cars != null) cars.setVisible(false);
             if (profile != null) profile.setVisible(false);
         }
@@ -62,6 +75,7 @@ public class About extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
+        // כפתור ה"חזור" (החץ ב-Toolbar) נשאר פעיל תמיד
         if (id == android.R.id.home) {
             finish();
             return true;
@@ -73,7 +87,7 @@ public class About extends AppCompatActivity {
             startActivity(new Intent(this, SearchAllCars.class));
             return true;
         } else if (id == R.id.nav_profile) {
-            startActivity(new Intent(this, UserPage.class));
+            startActivity(new Intent(this, UpdateProfileActivity.class));
             return true;
         }
 

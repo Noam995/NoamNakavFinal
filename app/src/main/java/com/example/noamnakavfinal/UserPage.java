@@ -55,14 +55,14 @@ public class UserPage extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish(); // חזרה למסך הקודם
             return true;
-        } else if (id == R.id.nav_home) {
-            startActivity(new Intent(this, MainActivity.class));
+        } else if (id == R.id.nav_profile) {
+            startActivity(new Intent(this, UpdateProfileActivity.class));
             finish();
             return true;
         } else if (id == R.id.nav_cars) {
             startActivity(new Intent(this, SearchAllCars.class));
             return true;
-        } else if (id == R.id.nav_profile) {
+        } else if (id == R.id.nav_home) {
             Toast.makeText(this, "אתה כבר באזור האישי שלך 😊", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.menu_about) {
