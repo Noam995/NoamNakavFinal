@@ -18,6 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NoamNakavFinal">
         <activity
+            android:name=".MyPurchasesActivity"
+            android:exported="false" />
+        <activity
             android:name=".UpdateProfileActivity"
             android:exported="false" />
         <activity

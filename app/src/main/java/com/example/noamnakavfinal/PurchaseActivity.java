@@ -1,8 +1,6 @@
 package com.example.noamnakavfinal;
 
 import android.Manifest;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -19,22 +17,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.noamnakavfinal.model.Car;
-import com.example.noamnakavfinal.model.Meeting; // הוספנו את המודל של הפגישה
 import com.example.noamnakavfinal.model.Sale;
 import com.example.noamnakavfinal.model.User;
 import com.example.noamnakavfinal.service.DatabaseService;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 public class PurchaseActivity extends AppCompatActivity {
 
-    // קודים לזיהוי בקשת הרשאה
+    // קוד לזיהוי בקשת הרשאה
     private static final int SMS_PERMISSION_CODE_PURCHASE = 100;
-    private static final int SMS_PERMISSION_CODE_MEETING = 101;
 
     TextView tvTitle, tvPrice, tvYear;
     EditText etEmail, etIdNumber, etCardNumber, etCardExpiry, etCvv;
@@ -46,11 +41,6 @@ public class PurchaseActivity extends AppCompatActivity {
     // משתנים לשמירת נתונים זמניים
     private int selectedInstallments = 1;
     private double monthlyPayment = 0;
-
-    // משתנים לשמירת נתוני הפגישה
-    private String pendingMeetingTime = "";
-    private String pendingDate = "";
-    private String pendingTimeStr = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +70,15 @@ public class PurchaseActivity extends AppCompatActivity {
             }
         });
 
-        // 5. כפתור פגישה
-        btnCreateMeeting.setOnClickListener(v -> openDateTimePicker());
+        // 5. כפתור פגישה - מעבר לדף יצירת פגישה (ArrangeMeeting)
+        btnCreateMeeting.setOnClickListener(v -> {
+            Intent intent = new Intent(PurchaseActivity.this, ArrangeMeeting.class);
+            // מומלץ להעביר את נתוני הרכב לדף הפגישה במידה וצריך אותם שם
+            if (currentCar != null) {
+                intent.putExtra("car", currentCar);
+            }
+            startActivity(intent);
+        });
     }
 
     private void initViews() {
@@ -98,93 +95,7 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
     // ==========================================
-    // חלק א': לוגיקת יצירת פגישה
-    // ==========================================
-
-    private void openDateTimePicker() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
-                (view, year1, month1, dayOfMonth) -> {
-                    openTimePicker(year1, month1, dayOfMonth);
-                }, year, month, day);
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-        datePickerDialog.show();
-    }
-
-    private void openTimePicker(int year, int month, int day) {
-        Calendar calendar = Calendar.getInstance();
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
-
-        TimePickerDialog timePickerDialog = new TimePickerDialog(this,
-                (view, hourOfDay, minute1) -> {
-                    // פיצול התאריך והשעה כדי שנוכל לשמור אותם מסודר במודל הפגישה
-                    pendingDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month + 1, year);
-                    pendingTimeStr = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute1);
-
-                    // משתנה שמשלב את שניהם בשביל הודעת ה-SMS
-                    pendingMeetingTime = pendingDate + " בשעה " + pendingTimeStr;
-
-                    checkMeetingPermissionAndProceed();
-                }, hour, minute, true);
-        timePickerDialog.show();
-    }
-
-    private void checkMeetingPermissionAndProceed() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-            scheduleMeetingAndSendSMS();
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_CODE_MEETING);
-        }
-    }
-
-    private void scheduleMeetingAndSendSMS() {
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        if (mAuth.getCurrentUser() == null) return;
-
-        String uid = mAuth.getCurrentUser().getUid();
-        db.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
-            @Override
-            public void onCompleted(User user) {
-                // 1. יצירת מזהה ואובייקט פגישה
-                String meetingId = db.generateMeetingId();
-                Meeting meeting = new Meeting(meetingId, user.getEmail(), pendingDate, pendingTimeStr);
-
-                // 2. שמירת הפגישה בדאטה בייס (כדי שהמנהל יראה אותה)
-                db.createNewMeeting(meeting, new DatabaseService.DatabaseCallback<Void>() {
-                    @Override
-                    public void onCompleted(Void object) {
-                        // 3. רק לאחר השמירה בהצלחה, נשלח את ה-SMS
-                        String msg = "היי " + user.getFname() + ", נקבעה לך פגישה לתאריך " + pendingMeetingTime +
-                                " בקשר לרכב מסוג " + currentCar.getBrand() + " " + currentCar.getModel() + ". נתראה!";
-
-                        if (user.getPhone() != null && !user.getPhone().isEmpty()) {
-                            sendSmsToUser(user.getPhone(), msg);
-                        }
-
-                        Toast.makeText(PurchaseActivity.this, "הפגישה נשמרה בהצלחה ו-SMS נשלח!", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onFailed(Exception e) {
-                        Toast.makeText(PurchaseActivity.this, "שגיאה בשמירת הפגישה במסד הנתונים", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailed(Exception e) {
-                Toast.makeText(PurchaseActivity.this, "שגיאה במשיכת פרטי משתמש", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    // ==========================================
-    // חלק ב': לוגיקת רכישה, תשלומים ומחיקת רכב
+    // לוגיקת רכישה, תשלומים ומחיקת רכב
     // ==========================================
 
     private void showInstallmentOptionsDialog() {
@@ -288,7 +199,7 @@ public class PurchaseActivity extends AppCompatActivity {
     }
 
     // ==========================================
-    // חלק ג': כללי (הרשאות ועזרים)
+    // כללי (הרשאות ועזרים)
     // ==========================================
 
     @Override
@@ -302,9 +213,6 @@ public class PurchaseActivity extends AppCompatActivity {
                 Toast.makeText(this, "אין הרשאת SMS - הרכישה תבוצע ללא הודעה", Toast.LENGTH_LONG).show();
                 performPurchase(false);
             }
-        } else if (requestCode == SMS_PERMISSION_CODE_MEETING) {
-            if (granted) scheduleMeetingAndSendSMS();
-            else Toast.makeText(this, "חובה הרשאת SMS כדי לשלוח זימון לפגישה", Toast.LENGTH_LONG).show();
         }
     }
 

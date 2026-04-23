@@ -98,9 +98,12 @@ public class About extends AppCompatActivity {
         String address = "ראשון לציון";
         Uri uri = Uri.parse("geo:0,0?q=" + Uri.encode(address));
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, uri);
-        if (mapIntent.resolveActivity(getPackageManager()) != null) {
+
+        // מנסים לפתוח את אפליקציית הניווט ישירות כדי לעקוף את חסימות הנראות של אנדרואיד 11+
+        try {
             startActivity(mapIntent);
-        } else {
+        } catch (android.content.ActivityNotFoundException e) {
+            // במידה ובאמת אין שום אפליקציית ניווט על המכשיר
             Toast.makeText(this, "לא נמצאה אפליקציית ניווט", Toast.LENGTH_SHORT).show();
         }
     }
