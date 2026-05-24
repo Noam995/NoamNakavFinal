@@ -81,7 +81,7 @@ public class UserPage extends AppCompatActivity {
 
     // פונקציה למעבר להיסטוריית רכישות
     public void goToPurchases(View view) {
-        Intent intent = new Intent(this, PurchaseActivity.class);
+        Intent intent = new Intent(this, MyPurchasesActivity.class);
         startActivity(intent);
     }
 

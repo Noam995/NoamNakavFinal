@@ -1,5 +1,6 @@
 package com.example.noamnakavfinal;
 
+// ייבוא של כל המחלקות הנדרשות מאנדרואיד ומפרויקט שלך
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -25,30 +26,29 @@ import com.example.noamnakavfinal.util.ImageUtil;
 
 public class AddNewCar extends AppCompatActivity  {
 
+    // --- הגדרת המשתנים של רכיבי התצוגה ---
+
+    // שדות טקסט להזנת נתונים
     EditText License, Model, Price, Km, DatetilTest, Enginevolume, Engine;
 
-    // Spinners
+    // תפריטים נגללים (Spinners) לבחירת אפשרויות
     Spinner spBrand, spColor, spYear, spHand, spOwnership, spGas;
 
-    // RadioButtons + RadioGroup
+    // כפתורי רדיו לבחירת סוג גיר (ידני/אוטומט)
     RadioGroup radioGrouper;
     RadioButton manual, autmatic;
 
-    // Button
-    Button btnAdd,btnGallery,btnTakePic;
+    // כפתורי פעולה ותצוגת תמונה
+    Button btnAdd, btnGallery, btnTakePic;
     ImageView imageView;
 
-
+    // משתנה לגישה למסד הנתונים (שירות הדאטה-בייס שלך)
     private DatabaseService databaseService;
 
-
-    /// Activity result launcher for capturing image from camera
+    // משתנה לטיפול בחזרה ממצלמת המכשיר (קבלת התמונה שצולמה)
     private ActivityResultLauncher<Intent> captureImageLauncher;
 
-
-
-    // constant to compare
-    // the activity result code
+    // קבוע מספרי המשמש לזיהוי חזרה מבחירת תמונה מהגלריה
     int SELECT_PICTURE = 200;
 
     @Override
@@ -56,56 +56,50 @@ public class AddNewCar extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_car);
 
-
-
+        // קריאה לפונקציה שמקשרת בין המשתנים בקוד ל-ID שלהם בקובץ ה-XML
         InitViews();
 
-        /// request permission for the camera and storage
+        // בקשת הרשאות מהמשתמש לגישה למצלמה ולאחסון (כדי להעלות תמונה)
         ImageUtil.requestPermission(this);
 
-        /// get the instance of the database service
+        // קבלת מופע (Instance) של מחלקת שירות מסד הנתונים
         databaseService = DatabaseService.getInstance();
 
-
-
-
-
-        /// register the activity result launcher for capturing image from camera
+        // הגדרת המאזין שיטפל בתוצאה שחוזרת מהמצלמה
         captureImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+                    // אם הצילום עבר בהצלחה ויש מידע
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                        // חילוץ התמונה (Bitmap) מהנתונים שחזרו והצגתה ב-ImageView
                         Bitmap bitmap = (Bitmap) result.getData().getExtras().get("data");
                         imageView.setImageBitmap(bitmap);
                     }
                 });
 
+        // --- הגדרת מאזינים ללחיצות על כפתורים ---
 
-
-
-
-
-
+        // לחיצה על כפתור הגלריה: פותחת את בחירת התמונות מהמכשיר
         btnGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectImageFromGallery();
-
-
             }
         });
 
+        // לחיצה על כפתור המצלמה: פותחת את אפליקציית המצלמה
         btnTakePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 captureImageFromCamera();
-
             }
         });
 
+        // לחיצה על כפתור ההוספה: איסוף הנתונים, ולידציה ושמירה במסד הנתונים
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // משיכת הטקסט שהוזן בשדות הטקסט
                 String license = License.getText().toString();
                 String model = Model.getText().toString();
                 String stprice = Price.getText().toString();
@@ -114,7 +108,7 @@ public class AddNewCar extends AppCompatActivity  {
                 String stengineVolume = Enginevolume.getText().toString();
                 String engine = Engine.getText().toString();
 
-                // Spinners
+                // משיכת הפריטים שנבחרו בתפריטים הנגללים (Spinners)
                 String brand = spBrand.getSelectedItem().toString();
                 String color = spColor.getSelectedItem().toString();
                 String year = spYear.getSelectedItem().toString();
@@ -122,14 +116,13 @@ public class AddNewCar extends AppCompatActivity  {
                 String ownership = spOwnership.getSelectedItem().toString();
                 String gas = spGas.getSelectedItem().toString();
 
-
+                // המרת נתוני טקסט למספרים (כדי לשמור אותם כסוג הנתון הנכון ב-Car)
                 double price = Double.parseDouble(stprice);
                 double km = Double.parseDouble(stkm);
                 double engineVolume = Double.parseDouble(stengineVolume);
                 int hand = Integer.parseInt(sthand);
 
-
-                // RadioGroup – Gear type
+                // בדיקה איזה כפתור רדיו נבחר עבור סוג הגיר
                 int selectedId = radioGrouper.getCheckedRadioButtonId();
                 String gearType = "";
 
@@ -139,12 +132,11 @@ public class AddNewCar extends AppCompatActivity  {
                     gearType = "Automatic";
                 }
 
-                // עכשיו כל הנתונים מאורגנים וניתנים לשימוש
-
+                // המרת התמונה שנמצאת ב-ImageView למחרוזת Base64 כדי שיהיה אפשר לשמור אותה במסד הנתונים
                 String imageBase64 = ImageUtil.convertTo64Base(imageView);
 
 
-                if (license.isEmpty() || model.isEmpty() || price > 0 ||
+                if (license.isEmpty() || model.isEmpty() || price >= 0 ||
                         km >= 0 || dateTilTest.isEmpty() || engineVolume > 0
                         || engine.isEmpty() || brand.isEmpty()
                         || color.isEmpty() || year.isEmpty()
@@ -155,43 +147,37 @@ public class AddNewCar extends AppCompatActivity  {
                     Toast.makeText(AddNewCar.this, "המוצר נוסף בהצלחה!", Toast.LENGTH_SHORT).show();
                 }
 
-                /// generate a new id for the item
+                // ייצור מזהה (ID) חדש וייחודי לרכב דרך שירות מסד הנתונים
                 String id = databaseService.generateCarId();
 
+                // יצירת אובייקט Car חדש עם כל הנתונים שנאספו מהמשתמש
+                Car newItem = new Car(id, license, brand, model, color, year, price, km, hand, gearType, ownership, gas, dateTilTest, engineVolume, engine, true, imageBase64);
 
-                Car newItem = new Car(id, license, brand, model, color, year, price, km, hand, gearType, ownership, gas, dateTilTest, engineVolume, engine, true,imageBase64);
-
-
-                /// save the item to the database and get the result in the callback
+                // קריאה לפונקציה השומרת את הרכב במסד הנתונים (Firebase כנראה)
                 databaseService.createNewCar(newItem, new DatabaseService.DatabaseCallback<Void>() {
                     @Override
                     public void onCompleted(Void object) {
+                        // אם השמירה הצליחה: מדפיסים ללוג, מציגים הודעה, ומעבירים את המשתמש לדף מנהל
                         Log.d("TAG", "Item added successfully");
                         Toast.makeText(AddNewCar.this, "Item added successfully", Toast.LENGTH_SHORT).show();
-                        /// clear the input fields after adding the item for the next item
                         Log.d("TAG", "Clearing input fields");
 
                         Intent intent = new Intent(AddNewCar.this, AdminPage.class);
                         startActivity(intent);
-
-
                     }
 
                     @Override
                     public void onFailed(Exception e) {
+                        // אם השמירה נכשלה: מדפיסים את השגיאה ללוג ומציגים הודעה למשתמש
                         Log.e("TAG", "Failed to add item", e);
-                        Toast.makeText(AddNewCar.this, "Failed to add food", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddNewCar.this, "Failed to add car", Toast.LENGTH_SHORT).show(); // שים לב: תיקנתי food ל-car בהערה
                     }
                 });
             }
-
-
         });
     }
 
-
-
-
+    // פונקציה שאחראית לקשר בין משתני ה-Java לבין רכיבי התצוגה (Views) מקובץ ה-XML
     private void InitViews() {
         License = findViewById(R.id.etLicense);
         Model = findViewById(R.id.etModel);
@@ -211,64 +197,50 @@ public class AddNewCar extends AppCompatActivity  {
         radioGrouper = findViewById(R.id.radiogroupgear);
         manual = findViewById(R.id.rBmanual);
         autmatic = findViewById(R.id.rBautmatic);
-        imageView=findViewById(R.id.imageView);
+        imageView = findViewById(R.id.imageView);
 
-        btnAdd=findViewById(R.id.btnAdd);
-        btnGallery=findViewById(R.id.btnimagebrowse);
-        btnTakePic=findViewById(R.id.btncamara);
+        btnAdd = findViewById(R.id.btnAdd);
+        btnGallery = findViewById(R.id.btnimagebrowse);
+        btnTakePic = findViewById(R.id.btncamara);
     }
 
-
-    /// select image from gallery
+    // פונקציה לבחירת תמונה מהגלריה שמפעילה את imageChooser()
     private void selectImageFromGallery() {
-        //   Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        //  selectImageLauncher.launch(intent);
-
         imageChooser();
     }
 
-    /// capture image from camera
+    // פונקציה לפתיחת אפליקציית המצלמה המובנית של הטלפון וצילום תמונה
     private void captureImageFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         captureImageLauncher.launch(takePictureIntent);
     }
 
-
-
-
-
+    // יצירת בקשה למערכת ההפעלה לבחור קובץ מסוג תמונה מהאחסון
     void imageChooser() {
-
-        // create an instance of the
-        // intent of the type image
         Intent i = new Intent();
-        i.setType("image/*");
-        i.setAction(Intent.ACTION_GET_CONTENT);
+        i.setType("image/*"); // מגדיר שאנחנו מחפשים רק תמונות
+        i.setAction(Intent.ACTION_GET_CONTENT); // פעולת בחירת תוכן
 
-        // pass the constant to compare it
-        // with the returned requestCode
+        // פותח את חלון הבחירה וממתין לתוצאה עם הקוד SELECT_PICTURE
         startActivityForResult(Intent.createChooser(i, "Select Picture"), SELECT_PICTURE);
     }
 
-    // this function is triggered when user
-    // selects the image from the imageChooser
+    // פונקציה שמופעלת אוטומטית כשהמשתמש חוזר מבחירת תמונה (או מפעולות אחרות שמחזירות תוצאה)
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // בודק אם הפעולה הסתיימה בהצלחה
         if (resultCode == RESULT_OK) {
 
-            // compare the resultCode with the
-            // SELECT_PICTURE constant
+            // מוודא שהתוצאה שחזרה שייכת לבקשת פתיחת הגלריה (SELECT_PICTURE)
             if (requestCode == SELECT_PICTURE) {
-                // Get the url of the image from data
+                // מקבל את הקישור (Uri) של התמונה שנבחרה
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
-                    // update the preview image in the layout
+                    // מעדכן את התמונה בתצוגה שעל המסך
                     imageView.setImageURI(selectedImageUri);
                 }
             }
         }
     }
 }
-
-

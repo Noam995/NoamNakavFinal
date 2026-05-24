@@ -21,19 +21,6 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button
-        android:id="@+id/btnHistory"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="היסטוריית רכישות"
-        android:textColor="#FFFFFF"
-        android:onClick="salehistory"
-        android:background="@drawable/btn_primary"
-        app:layout_constraintTop_toBottomOf="@id/tvAdmin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="24dp"/>
-
-    <Button
         android:id="@+id/btnAddcar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -41,21 +28,34 @@
         android:textColor="#FFFFFF"
         android:background="@drawable/btn_primary"
         android:onClick="gotoAddnewcar"
-        app:layout_constraintTop_toBottomOf="@id/btnHistory"
+        app:layout_constraintTop_toBottomOf="@id/tvAdmin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="24dp"/>
+
+    <Button
+        android:id="@+id/btnDeleteCar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text=" מחק ועדכן מכונית"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_primary"
+        android:onClick="DeleteCar"
+        app:layout_constraintTop_toBottomOf="@id/btnAddcar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="16dp"/>
 
     <Button
-        android:id="@+id/btnDeleteCar"
+        android:id="@+id/btnHistory"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="מחק מכונית"
+        android:text="היסטוריית רכישות"
         android:textColor="#FFFFFF"
+        android:onClick="salehistory"
         android:background="@drawable/btn_primary"
-        android:onClick="DeleteCar"
-        app:layout_constraintTop_toBottomOf="@id/btnAddcar"
+        app:layout_constraintTop_toBottomOf="@id/btnDeleteCar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="24dp"
@@ -69,7 +69,7 @@
         android:textColor="#FFFFFF"
         android:background="@drawable/btn_primary"
         android:onClick="gotoallUsers"
-        app:layout_constraintTop_toBottomOf="@id/btnDeleteCar"
+        app:layout_constraintTop_toBottomOf="@id/btnHistory"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginHorizontal="24dp"
