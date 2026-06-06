@@ -1,6 +1,6 @@
 package com.example.noamnakavfinal;
 
-// ייבוא מחלקות נדרשות של אנדרואיד ושל הפרויקט (תצוגה, מעבר מסכים, מודל הרכב ועזרים לתמונות)
+// ייבוא מחלקות נדרשות של אנדרואיד ושל הפרויקט (תצוגה, מעבר מסכים, מודל הרכב ועזרים לתמונות
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
