@@ -319,7 +319,7 @@ public class PurchaseActivity extends AppCompatActivity {
 
     // ==========================================
     // חלק ג': כללי (הרשאות ועזרים)
-    // ==========================================
+    // =========================================
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
