@@ -6,7 +6,7 @@ public class Meeting {
     private String date;
     private String time;
 
-    // קונסטרקטור ריק (חובה עבור Firebase)
+    // חובה עבור Firebase: בנאי ריק
     public Meeting() {
     }
 
@@ -18,25 +18,35 @@ public class Meeting {
     }
 
     // Getters and Setters
-    public String getMeetingId() { return meetingId; }
-    public void setMeetingId(String meetingId) { this.meetingId = meetingId; }
+    public String getMeetingId() {
+        return meetingId;
+    }
 
-    public String getUserEmail() { return userEmail; }
-    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
+    public void setMeetingId(String meetingId) {
+        this.meetingId = meetingId;
+    }
 
-    public String getDate() { return date; }
-    public void setDate(String date) { this.date = date; }
+    public String getUserEmail() {
+        return userEmail;
+    }
 
-    public String getTime() { return time; }
-    public void setTime(String time) { this.time = time; }
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 
-    @Override
-    public String toString() {
-        return "Meeting{" +
-                "meetingId='" + meetingId + '\'' +
-                ", userEmail='" + userEmail + '\'' +
-                ", date='" + date + '\'' +
-                ", time='" + time + '\'' +
-                '}';
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

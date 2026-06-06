@@ -1,35 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_margin="8dp"
-    android:background="@drawable/btn_primary"
-    android:elevation="4dp">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    android:layoutDirection="rtl">
 
-    <TextView
-        android:id="@+id/tvMeetingEmail"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="אימייל לקוח"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/white"/>
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/tvMeetingDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="תאריך: 01/01/2026"
-        android:textColor="@color/white"/>
-        android:layout_marginTop="8dp"/>
+        <ImageView
+            android:id="@+id/ivUserIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_myplaces"
+            app:tint="#1F3A5F"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-    <TextView
-        android:id="@+id/tvMeetingTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="שעה: 14:00"
-        android:textColor="@color/white"/>
-        android:layout_marginTop="4dp"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvUserEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:textColor="#1F3A5F"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/ivUserIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="israel.israeli@gmail.com" />
+
+        <TextView
+            android:id="@+id/tvMeetingDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#546E7A"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/tvUserEmail"
+            app:layout_constraintTop_toBottomOf="@id/tvUserEmail"
+            tools:text="15/05/2024" />
+
+        <TextView
+            android:id="@+id/tvSeparator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" • "
+            android:textColor="#90A4AE"
+            android:textSize="14sp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintStart_toEndOf="@id/tvMeetingDate"
+            app:layout_constraintTop_toTopOf="@id/tvMeetingDate"
+            app:layout_constraintBottom_toBottomOf="@id/tvMeetingDate" />
+
+        <TextView
+            android:id="@+id/tvMeetingTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#0288D1"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/tvSeparator"
+            app:layout_constraintTop_toTopOf="@id/tvMeetingDate"
+            app:layout_constraintBottom_toBottomOf="@id/tvMeetingDate"
+            tools:text="14:30" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
