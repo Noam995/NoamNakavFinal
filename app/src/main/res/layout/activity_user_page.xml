@@ -65,12 +65,26 @@
         android:layout_width="260dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
-        android:text="לתאם פגישה"
+        android:text="יצירת פגישה"
         android:onClick="arrangeMeeting"
         android:background="@drawable/btn_primary"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@+id/btnSale"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btn_my_meetings"
+        android:layout_width="260dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:text="כל הפגישות שלי"
+        android:onClick="goToMyMeetings"
+        android:background="@drawable/btn_primary"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@+id/btnMetting"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -84,7 +98,7 @@
         android:background="@drawable/btn_primary"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@+id/btnMetting"
+        app:layout_constraintTop_toBottomOf="@+id/btn_my_meetings"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

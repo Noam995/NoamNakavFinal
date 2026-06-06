@@ -506,6 +506,12 @@ public class DatabaseService {
     public void getMeetingList(@NotNull final DatabaseCallback<List<Meeting>> callback) {
         getDataList(MEETINGS_PATH, Meeting.class, callback);
     }
+    /// delete a meeting from the database
+    /// @param meetingId the id of the meeting to delete
+    /// @param callback the callback to call when the operation is completed
+    public void deleteMeeting(@NotNull final String meetingId, @Nullable final DatabaseCallback<Void> callback) {
+        deleteData(MEETINGS_PATH + "/" + meetingId, callback);
+    }
 
     // endregion Meeting Section
 }

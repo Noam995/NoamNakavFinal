@@ -3,11 +3,13 @@ package com.example.noamnakavfinal;
 // ייבוא מחלקות נדרשות של אנדרואיד, פיירבייס, מודלים של הפרויקט ועזרים כמו תאריך ושעה
 import android.Manifest;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,6 +19,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.noamnakavfinal.model.Car;
@@ -34,9 +37,9 @@ import java.util.Locale;
 // מחלקה האחראית על מסך הרכישה - מאפשרת למשתמש לקנות רכב (כולל פריסת תשלומים) או לקבוע פגישה לנסיעת מבחן
 public class PurchaseActivity extends AppCompatActivity {
 
-    // קודים (מספרים ייחודיים) לזיהוי בקשות ההרשאה לשליחת SMS מול מערכת ההפעלה
-    private static final int SMS_PERMISSION_CODE_PURCHASE = 100; // הרשאה במסגרת רכישה
-    private static final int SMS_PERMISSION_CODE_MEETING = 101;  // הרשאה במסגרת קביעת פגישה
+    // קודים (מספרים ייחודיים) לזיהוי בקשות ההרשאה להתראות מול מערכת ההפעלה
+    private static final int NOTIFICATION_PERMISSION_CODE_PURCHASE = 100; // הרשאה במסגרת רכישה
+    private static final int NOTIFICATION_PERMISSION_CODE_MEETING = 101;  // הרשאה במסגרת קביעת פגישה
 
     // --- רכיבי תצוגה ---
     TextView tvTitle, tvPrice, tvYear; // טקסטים להצגת פרטי הרכב
@@ -51,7 +54,7 @@ public class PurchaseActivity extends AppCompatActivity {
     private double monthlyPayment = 0; // גובה התשלום החודשי
 
     // --- משתנים לשמירת נתוני הפגישה המתוכננת ---
-    private String pendingMeetingTime = ""; // המחרוזת המלאה להודעת ה-SMS
+    private String pendingMeetingTime = ""; // המחרוזת המלאה להודעת ההתראה
     private String pendingDate = ""; // התאריך שנבחר
     private String pendingTimeStr = ""; // השעה שנבחרה
 
@@ -136,36 +139,39 @@ public class PurchaseActivity extends AppCompatActivity {
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, hourOfDay, minute1) -> {
-                    // פיצול התאריך והשעה כדי שנוכל לשמור אותם מסודר במודל הפגישה (שמים 0 מוביל אם צריך)
+                    // פיצול התאריך והשעה כדי שנוכל לשמור אותם מסודר במודל הפגישה
                     pendingDate = String.format(Locale.getDefault(), "%02d/%02d/%d", day, month + 1, year);
                     pendingTimeStr = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute1);
 
-                    // משתנה שמשלב את שניהם בשביל הודעת ה-SMS
+                    // משתנה שמשלב את שניהם בשביל ההתראה
                     pendingMeetingTime = pendingDate + " בשעה " + pendingTimeStr;
 
-                    // לאחר שהמשתמש סיים לבחור תאריך ושעה, נבדוק הרשאות להודעות ונמשיך
+                    // לאחר שהמשתמש סיים לבחור תאריך ושעה, נבדוק הרשאות להתראות ונמשיך
                     checkMeetingPermissionAndProceed();
-                }, hour, minute, true); // true = שעון 24 שעות במקום AM/PM
+                }, hour, minute, true); // true = שעון 24 שעות
         timePickerDialog.show();
     }
 
-    // בודק אם לאפליקציה יש הרשאה לשלוח SMS. אם כן - ממשיך. אם לא - מבקש הרשאה.
+    // בודק אם לאפליקציה יש הרשאה לשלוח התראות. אם כן - ממשיך. אם לא - מבקש הרשאה.
     private void checkMeetingPermissionAndProceed() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-            scheduleMeetingAndSendSMS(); // יש הרשאה, אפשר לקבוע פגישה ולשלוח
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                scheduleMeeting(true); // יש הרשאה, שומר ומקפיץ התראה
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE_MEETING);
+            }
         } else {
-            // אין הרשאה - מבקש מהמשתמש לאשר קופצת של אנדרואיד
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_CODE_MEETING);
+            // באנדרואיד ישן אין צורך לבקש הרשאה
+            scheduleMeeting(true);
         }
     }
 
-    // שומר את הפגישה בדאטה-בייס ושולח הודעת סמס ללקוח
-    private void scheduleMeetingAndSendSMS() {
+    // שומר את הפגישה בדאטה-בייס ומקפיץ התראה (אם יש אישור)
+    private void scheduleMeeting(boolean showNotification) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() == null) return; // הגנה: אם אין משתמש, עוצרים
 
         String uid = mAuth.getCurrentUser().getUid(); // שליפת ה-ID של המשתמש
-        // משיכת פרטי המשתמש המלאים מהמסד כדי לקבל את מספר הטלפון והשם שלו
         db.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
@@ -173,19 +179,18 @@ public class PurchaseActivity extends AppCompatActivity {
                 String meetingId = db.generateMeetingId();
                 Meeting meeting = new Meeting(meetingId, user.getEmail(), pendingDate, pendingTimeStr);
 
-                // 2. שמירת הפגישה בדאטה בייס (כדי שהמנהל יראה אותה)
+                // 2. שמירת הפגישה בדאטה בייס
                 db.createNewMeeting(meeting, new DatabaseService.DatabaseCallback<Void>() {
                     @Override
                     public void onCompleted(Void object) {
-                        // 3. רק לאחר שהפגישה נשמרה בהצלחה בשרת, נכין ונשלח את ה-SMS
-                        String msg = "היי " + user.getFname() + ", נקבעה לך פגישה לתאריך " + pendingMeetingTime +
-                                " בקשר לרכב מסוג " + currentCar.getBrand() + " " + currentCar.getModel() + ". נתראה!";
-
-                        if (user.getPhone() != null && !user.getPhone().isEmpty()) {
-                            sendSmsToUser(user.getPhone(), msg);
+                        // 3. הקפצת ההתראה (אם אושר)
+                        if (showNotification) {
+                            String msg = "נקבעה לך פגישה לתאריך " + pendingMeetingTime +
+                                    " בקשר לרכב " + currentCar.getBrand() + " " + currentCar.getModel() + ". נתראה!";
+                            sendAppNotification("פגישה נקבעה בהצלחה!", msg);
                         }
 
-                        Toast.makeText(PurchaseActivity.this, "הפגישה נשמרה בהצלחה ו-SMS נשלח!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(PurchaseActivity.this, "הפגישה נשמרה בהצלחה בשרת!", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -206,33 +211,26 @@ public class PurchaseActivity extends AppCompatActivity {
     // חלק ב': לוגיקת רכישה, תשלומים ומחיקת רכב
     // ==========================================
 
-    // מציג דיאלוג לבחירת כמות התשלומים
     private void showInstallmentOptionsDialog() {
-        // המערכים המסדרים את האפשרויות לתצוגה ואת הערך המספרי שמאחוריהן
         final String[] options = {"תשלום אחד (ללא ריבית)", "2 תשלומים", "4 תשלומים", "6 תשלומים", "8 תשלומים", "10 תשלומים", "12 תשלומים", "24 תשלומים"};
         final int[] installmentValues = {1, 2, 4, 6, 8, 10, 12, 24};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("בחר פריסת תשלומים");
 
-        // מה יקרה כשמשתמש בוחר פריט מתוך הרשימה (which מייצג את המיקום שנבחר)
         builder.setItems(options, (dialog, which) -> {
-            selectedInstallments = installmentValues[which]; // קבלת מספר התשלומים (למשל 4)
-            monthlyPayment = currentCar.getPrice() / selectedInstallments; // חישוב חודשי
-
-            // הצגת סיכום ותיקוף סופי של העסקה
+            selectedInstallments = installmentValues[which];
+            monthlyPayment = currentCar.getPrice() / selectedInstallments;
             showFinalConfirmationDialog();
         });
         builder.show();
     }
 
-    // מציג דיאלוג סופי שבו הלקוח רואה את סיכום התשלום ומאשר רכישה
     private void showFinalConfirmationDialog() {
         String message;
         if (selectedInstallments == 1) {
             message = "האם לחייב את כרטיסך בסך ₪" + currentCar.getPrice() + "?";
         } else {
-            // מעצב את המספר שיראה כמו כסף (למשל 2300.50 במקום 2300.5)
             String formattedMonthly = String.format(Locale.getDefault(), "%.2f", monthlyPayment);
             message = "בחרת ב-" + selectedInstallments + " תשלומים.\n" +
                     "סכום כל תשלום: ₪" + formattedMonthly + "\n" +
@@ -242,75 +240,69 @@ public class PurchaseActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("אישור עסקה")
                 .setMessage(message)
-                // במקרה של אישור, יבדוק הרשאות SMS ויתקדם לרכישה
                 .setPositiveButton("אשר רכישה", (dialog, which) -> checkPurchasePermissionAndProceed())
-                // במקרה של ביטול לא יעשה כלום
                 .setNegativeButton("ביטול", null)
                 .show();
     }
 
-    // בדיקת הרשאות SMS במסגרת תהליך הרכישה
+    // בדיקת הרשאות התראות במסגרת תהליך הרכישה
     private void checkPurchasePermissionAndProceed() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-            performPurchase(true); // מבצע רכישה ושולח SMS
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                performPurchase(true);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_CODE_PURCHASE);
+            }
         } else {
-            // מבקש הרשאה אם טרם ניתנה
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, SMS_PERMISSION_CODE_PURCHASE);
+            performPurchase(true);
         }
     }
 
-    // הפונקציה המרכזית שמטפלת במכירה: שומרת תיעוד במסד, מוחקת את הרכב מהמלאי, ושולחת SMS
-    private void performPurchase(boolean sendSms) {
+    // הפונקציה המרכזית שמטפלת במכירה: שומרת תיעוד, מוחקת רכב, ומקפיצה התראה
+    private void performPurchase(boolean showNotification) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() == null || currentCar == null) return;
 
         String uid = mAuth.getCurrentUser().getUid();
 
-        // קודם מביאים את המשתמש הנוכחי כדי שנוכל לחבר אותו לעסקה
         db.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
-                // קבלת התאריך והשעה הנוכחיים כדי לתעד את העסקה
                 String currentDate = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(new Date());
-
-                // יצירת אובייקט מכירה (Sale) שכולל את הרכב, הקונה, התאריך והסכום
                 Sale newSale = new Sale(null, currentCar, user, currentDate, currentCar.getPrice());
 
-                // 1. שמירת עסקת הרכישה בהיסטוריית העסקאות (כדי שהמנהל יוכל לראות)
+                // 1. שמירת העסקה
                 db.createNewSale(newSale, new DatabaseService.DatabaseCallback<Void>() {
                     @Override
                     public void onCompleted(Void unused) {
-
-                        // 2. מחיקת הרכב לחלוטין מהמלאי (כדי שמשתמשים אחרים לא יוכלו לקנות אותו)
+                        // 2. מחיקת הרכב מהמלאי
                         db.deleteCar(currentCar.getId(), new DatabaseService.DatabaseCallback<Void>() {
                             @Override
                             public void onCompleted(Void unused) {
-                                // 3. הכנת הודעת SMS עם סיכום העסקה
-                                String smsMsg = "מזל טוב " + user.getFname() + "! תתחדש על ה-" + currentCar.getBrand() + ". ";
-                                if (selectedInstallments > 1) {
-                                    String formattedMonthly = String.format(Locale.getDefault(), "%.2f", monthlyPayment);
-                                    smsMsg += "החיוב חולק ל-" + selectedInstallments + " תשלומים בסך " + formattedMonthly + " ש\"ח.";
-                                } else {
-                                    smsMsg += "החיוב בסך " + currentCar.getPrice() + " בוצע בהצלחה.";
-                                }
-
-                                // בדיקה שיש אישור לשלוח SMS ושמספר הטלפון לא ריק
-                                if (sendSms && user.getPhone() != null && !user.getPhone().isEmpty()) {
-                                    sendSmsToUser(user.getPhone(), smsMsg);
+                                // 3. הקפצת התראה
+                                if (showNotification) {
+                                    String notifMsg = "תתחדש על ה-" + currentCar.getBrand() + "! ";
+                                    if (selectedInstallments > 1) {
+                                        String formattedMonthly = String.format(Locale.getDefault(), "%.2f", monthlyPayment);
+                                        notifMsg += "החיוב חולק ל-" + selectedInstallments + " תשלומים בסך " + formattedMonthly + " ש\"ח.";
+                                    } else {
+                                        notifMsg += "החיוב בוצע בהצלחה.";
+                                    }
+                                    sendAppNotification("עסקה אושרה", notifMsg);
                                 }
 
                                 Toast.makeText(PurchaseActivity.this, "הרכישה הושלמה והרכב הוסר מהמאגר!", Toast.LENGTH_LONG).show();
 
-                                // 4. מעבר חזרה למסך כל הרכבים, וניקוי המסכים מעליו בהיסטוריה (Clear Top)
+                                // 4. חזרה לכל הרכבים
                                 Intent intent = new Intent(PurchaseActivity.this, SearchAllCars.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 startActivity(intent);
-                                finish(); // סגירת המסך הנוכחי
+                                finish();
                             }
 
                             @Override
                             public void onFailed(Exception e) {
-                                Toast.makeText(PurchaseActivity.this, "שגיאה במחיקת הרכב מהמערכת", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PurchaseActivity.this, "שגיאה במחיקת הרכב", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -329,38 +321,57 @@ public class PurchaseActivity extends AppCompatActivity {
     // חלק ג': כללי (הרשאות ועזרים)
     // ==========================================
 
-    // פונקציה מובנית שמופעלת מיד לאחר שהמשתמש מגיב לחלון בקשת ההרשאה (אפשר או חסם)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // בדיקה האם ההרשאה אושרה
         boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
 
-        // ניתוב התשובה בהתאם לסיבה שבגללה ביקשנו (רכישה או פגישה)
-        if (requestCode == SMS_PERMISSION_CODE_PURCHASE) {
-            if (granted) performPurchase(true); // יבצע קנייה וישלח הודעה
+        if (requestCode == NOTIFICATION_PERMISSION_CODE_PURCHASE) {
+            if (granted) performPurchase(true);
             else {
-                // המשתמש סירב להרשאת הודעות, אז נבצע קנייה אך בלי לשלוח לו חיווי ב-SMS
-                Toast.makeText(this, "אין הרשאת SMS - הרכישה תבוצע ללא הודעה", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "העסקה תתבצע, אך לא תוצג התראה ללא הרשאה", Toast.LENGTH_LONG).show();
                 performPurchase(false);
             }
-        } else if (requestCode == SMS_PERMISSION_CODE_MEETING) {
-            if (granted) scheduleMeetingAndSendSMS(); // הלקוח אישר - קובעים ושולחים SMS
-            else Toast.makeText(this, "חובה הרשאת SMS כדי לשלוח זימון לפגישה", Toast.LENGTH_LONG).show(); // אי אפשר לקבוע פגישה ללא SMS (כך הוגדר כאן)
+        } else if (requestCode == NOTIFICATION_PERMISSION_CODE_MEETING) {
+            if (granted) scheduleMeeting(true);
+            else {
+                Toast.makeText(this, "הפגישה תישמר, אך לא תקבל התראה ללא הרשאה", Toast.LENGTH_LONG).show();
+                scheduleMeeting(false);
+            }
         }
     }
 
-    // פונקציית העזר ששולחת פיזית את הודעת ה-SMS דרך רכיב ה-SmsManager של המכשיר
-    private void sendSmsToUser(String phoneNumber, String message) {
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNumber, null, message, null, null);
-        } catch (Exception e) {
-            e.printStackTrace(); // במקרה של שגיאה בשליחה נדפיס ללוג
+    // הפונקציה הכללית שיוצרת ומקפיצה את ההתראות (משמשת גם למכירה וגם לפגישה)
+    private void sendAppNotification(String title, String message) {
+        String channelId = "noam_motors_alerts";
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        // יצירת ערוץ (חובה באנדרואיד 8+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    channelId,
+                    "התראות המערכת",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            if (notificationManager != null) {
+                notificationManager.createNotificationChannel(channel);
+            }
+        }
+
+        // שימוש באייקון מובנה ובטוח של אנדרואיד, ושימוש ב-BigTextStyle כדי שהטקסט הארוך לא ייחתך
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true);
+
+        if (notificationManager != null) {
+            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
         }
     }
 
-    // פונקציה שמושכת את האימייל של המשתמש המחובר מהרשת ושמה אותו ישירות בתיבת הטקסט
     private void autoFillUserEmail() {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null) {
@@ -368,7 +379,6 @@ public class PurchaseActivity extends AppCompatActivity {
             db.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
                 @Override
                 public void onCompleted(User user) {
-                    // runOnUiThread - מוודא שהעדכון של התצוגה מתבצע בתהליך הראשי, אחרת האפליקציה עלולה לקרוס
                     if (user != null) runOnUiThread(() -> etEmail.setText(user.getEmail()));
                 }
                 @Override
@@ -377,14 +387,13 @@ public class PurchaseActivity extends AppCompatActivity {
         }
     }
 
-    // ולידציה לשדות התשלום - מוודא שהמשתמש הזין נתונים בכל שדות האשראי
     private boolean validateInputs() {
         if (etIdNumber.getText().toString().isEmpty() ||
                 etCardNumber.getText().toString().isEmpty() ||
                 etCardExpiry.getText().toString().isEmpty() ||
                 etCvv.getText().toString().isEmpty()) {
             Toast.makeText(this, "אנא מלא את כל פרטי התשלום", Toast.LENGTH_SHORT).show();
-            return false; // אם משהו חסר יחזיר שקר והרכישה לא תתקדם
+            return false;
         }
         return true;
     }
