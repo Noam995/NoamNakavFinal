@@ -26,7 +26,9 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.noamnakavfinal.model.Meeting;
 import com.example.noamnakavfinal.service.DatabaseService;
 import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.Calendar;
+import java.util.List; // אל תשכח את הייבוא הזה
 
 public class UserPage extends AppCompatActivity {
 
@@ -72,7 +74,7 @@ public class UserPage extends AppCompatActivity {
             startActivity(new Intent(this, SearchAllCars.class));
             return true;
         } else if (id == R.id.nav_home) {
-            Toast.makeText(this, "אתה כבר באזור האישי שלך 😊", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "אתה כבר באזור האישי שלך \uD83D\uDE0A", Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.menu_about) {
             startActivity(new Intent(this, About.class));
@@ -82,12 +84,11 @@ public class UserPage extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    // הפונקציה שיוצרת ומקפיצה התראה למכשיר (Push Notification)
+    // הפונקציה שיוצרת ומקפיצה התראה למכשיר
     private void sendMeetingNotification(String meetingDate, String meetingTime) {
         String channelId = "meeting_alerts";
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        // יצירת ערוץ התראות (דרישת חובה מאנדרואיד 8 ומעלה)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     channelId,
@@ -100,30 +101,27 @@ public class UserPage extends AppCompatActivity {
             }
         }
 
-        // בניית ההתראה עצמה
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId)
-                .setSmallIcon(R.mipmap.ic_launcher) // משתמש בלוגו של האפליקציה שלך כסמל ההתראה
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle("פגישה נקבעה בהצלחה!")
                 .setContentText("הפגישה ב-Noam Motors נקבעה ל-" + meetingDate + " בשעה " + meetingTime)
-                .setPriority(NotificationCompat.PRIORITY_HIGH) // מבטיח שההתראה תקפוץ מיד למעלה
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        // בדיקת הרשאות (חובה עבור אנדרואיד 13 ומעלה)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                // מקפיץ חלונית בקשת הרשאה למשתמש (אם עדיין אין לו)
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 101);
                 Toast.makeText(this, "אנא אשר התראות כדי לקבל אישורים על פגישות", Toast.LENGTH_LONG).show();
                 return;
             }
         }
 
-        // שיגור ההתראה!
         if (notificationManager != null) {
             notificationManager.notify((int) System.currentTimeMillis(), builder.build());
         }
     }
 
+    // בחירת תאריך ושעה
     private void showDateTimePicker() {
         final Calendar calendar = Calendar.getInstance();
         int currentYear = calendar.get(Calendar.YEAR);
@@ -139,34 +137,12 @@ public class UserPage extends AppCompatActivity {
                     TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                             (timeView, hourOfDay, minute) -> {
 
+                                // עיצוב התאריך והשעה
                                 String meetingTime = String.format("%02d:%02d", hourOfDay, minute);
                                 String meetingDate = dayOfMonth + "/" + (month + 1) + "/" + year;
 
-                                String userEmail = "unknown";
-                                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                                    userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                                }
-
-                                DatabaseService dbService = DatabaseService.getInstance();
-                                String meetingId = dbService.generateMeetingId();
-
-                                Meeting meeting = new Meeting(meetingId, userEmail, meetingDate, meetingTime);
-
-                                // שמירה במסד הנתונים
-                                dbService.createNewMeeting(meeting, new DatabaseService.DatabaseCallback<Void>() {
-                                    @Override
-                                    public void onCompleted(Void object) {
-                                        Toast.makeText(UserPage.this, "הפגישה נשמרה בשרת!", Toast.LENGTH_SHORT).show();
-
-                                        // קריאה לפונקציית ההתראה שיצרנו
-                                        sendMeetingNotification(meetingDate, meetingTime);
-                                    }
-
-                                    @Override
-                                    public void onFailed(Exception e) {
-                                        Toast.makeText(UserPage.this, "שגיאה ביצירת הפגישה: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                    }
-                                });
+                                // בדיקת זמינות מול שרת הפיירבייס לפני יצירת הפגישה
+                                checkIfTimeIsAvailableAndSave(meetingDate, meetingTime);
 
                             }, currentHour, currentMinute, true);
 
@@ -174,7 +150,71 @@ public class UserPage extends AppCompatActivity {
 
                 }, currentYear, currentMonth, currentDay);
 
+        // מניעת בחירת תאריך שעבר (לפני היום)
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
+
         datePickerDialog.show();
+    }
+
+    // פונקציה חדשה: בדיקה במסד הנתונים האם קיימת כבר פגישה באותו המועד
+    private void checkIfTimeIsAvailableAndSave(String chosenDate, String chosenTime) {
+        DatabaseService dbService = DatabaseService.getInstance();
+
+        // הערה: יש לוודא שקיימת פונקציה כזו במחלקה DatabaseService שמחזירה את כל הפגישות
+        dbService.getMeetingList(new DatabaseService.DatabaseCallback<List<Meeting>>() {
+            @Override
+            public void onCompleted(List<Meeting> allMeetings) {
+                boolean isTimeTaken = false;
+
+                if (allMeetings != null) {
+                    for (Meeting meeting : allMeetings) {
+                        // אם התאריך והשעה קיימים כבר במסד הנתונים
+                        if (chosenDate.equals(meeting.getDate()) && chosenTime.equals(meeting.getTime())) {
+                            isTimeTaken = true;
+                            break; // מצאנו התאמה, אפשר לצאת מהלולאה
+                        }
+                    }
+                }
+
+                if (isTimeTaken) {
+                    // המועד תפוס! נודיע למשתמש
+                    Toast.makeText(UserPage.this, "המועד שבחרת כבר תפוס \uD83D\uDE15\nאנא נסה לקבוע תאריך או שעה אחרים.", Toast.LENGTH_LONG).show();
+                } else {
+                    // המועד פנוי! נמשיך בשמירת הפגישה
+                    saveMeeting(chosenDate, chosenTime, dbService);
+                }
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(UserPage.this, "שגיאה בבדיקת זמינות: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // פונקציה לשמירת הפגישה לאחר שווידאנו שהמועד פנוי
+    private void saveMeeting(String meetingDate, String meetingTime, DatabaseService dbService) {
+        String userEmail = "unknown";
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            userEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        }
+
+        String meetingId = dbService.generateMeetingId();
+        Meeting meeting = new Meeting(meetingId, userEmail, meetingDate, meetingTime);
+
+        dbService.createNewMeeting(meeting, new DatabaseService.DatabaseCallback<Void>() {
+            @Override
+            public void onCompleted(Void object) {
+                Toast.makeText(UserPage.this, "הפגישה נשמרה בשרת!", Toast.LENGTH_SHORT).show();
+                // שליחת התראה למכשיר
+                sendMeetingNotification(meetingDate, meetingTime);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(UserPage.this, "שגיאה ביצירת הפגישה: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void arrangeMeeting(View view) {

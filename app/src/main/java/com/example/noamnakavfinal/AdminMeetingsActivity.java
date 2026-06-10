@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView; // הוספנו ייבוא לרכיב החיפוש
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -27,7 +28,9 @@ public class AdminMeetingsActivity extends AppCompatActivity {
     private RecyclerView rvMeetings;
     private MeetingAdapter adapter;
     private List<Meeting> meetingList;
+    private List<Meeting> fullMeetingList; // רשימה מלאה שתשמור את כל הפגישות המקוריות מהשרת
     private DatabaseService databaseService;
+    private SearchView searchView; // משתנה עבור רכיב החיפוש
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +38,33 @@ public class AdminMeetingsActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_all_meetings);
 
-        // התיקון כאן: הוספתי את R.id.main_all_meetings במקום מה שהיה חסר
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_all_meetings), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // הגדרת ה-SearchView והאזנה לשינויי טקסט
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterMeetings(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterMeetings(newText);
+                return true;
+            }
+        });
+
         rvMeetings = findViewById(R.id.rvMeetings);
         rvMeetings.setLayoutManager(new LinearLayoutManager(this));
 
         meetingList = new ArrayList<>();
+        fullMeetingList = new ArrayList<>(); // אתחול הרשימה המלאה השמורה
         adapter = new MeetingAdapter(this, meetingList);
         rvMeetings.setAdapter(adapter);
 
@@ -58,7 +77,7 @@ public class AdminMeetingsActivity extends AppCompatActivity {
 
             @Override
             public void onCompleted(List<Meeting> object) {
-                meetingList.clear();
+                fullMeetingList.clear(); // מנקים את רשימת המקור
 
                 if (object != null) {
                     Date currentDate = new Date();
@@ -70,12 +89,14 @@ public class AdminMeetingsActivity extends AppCompatActivity {
                         if (meetingDate != null && meetingDate.before(currentDate)) {
                             databaseService.deleteMeeting(meeting.getMeetingId(), null);
                         } else {
-                            // הפגישה עתידית או שיש שגיאת פורמט (נשמור אותה כדי לא לאבד נתונים סתם)
-                            meetingList.add(meeting);
+                            // הפגישה עתידית או שיש שגיאת פורמט (נשמור אותה ברשימה המלאה)
+                            fullMeetingList.add(meeting);
                         }
                     }
                 }
-                adapter.notifyDataSetChanged();
+
+                // החלת הסינון הנוכחי על המידע החדש שהגיע
+                filterMeetings(searchView.getQuery().toString());
             }
 
             @Override
@@ -83,6 +104,25 @@ public class AdminMeetingsActivity extends AppCompatActivity {
                 Toast.makeText(AdminMeetingsActivity.this, "שגיאה בטעינת פגישות", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // פונקציה חדשה לסינון פגישות למנהל - מאפשרת חיפוש גם לפי אימייל וגם לפי תאריך
+    private void filterMeetings(String text) {
+        meetingList.clear();
+        if (text == null || text.trim().isEmpty()) {
+            meetingList.addAll(fullMeetingList);
+        } else {
+            String filterPattern = text.toLowerCase().trim();
+            for (Meeting meeting : fullMeetingList) {
+                boolean matchesEmail = meeting.getUserEmail() != null && meeting.getUserEmail().toLowerCase().contains(filterPattern);
+                boolean matchesDate = meeting.getDate() != null && meeting.getDate().toLowerCase().contains(filterPattern);
+
+                if (matchesEmail || matchesDate) {
+                    meetingList.add(meeting);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     // פונקציית עזר לפענוח בטוח של התאריך והשעה בכמה פורמטים נפוצים

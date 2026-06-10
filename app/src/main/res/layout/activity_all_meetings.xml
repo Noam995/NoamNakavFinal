@@ -20,6 +20,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+
+
     <TextView
         android:id="@+id/tvAllMeetingsTitle"
         android:layout_width="wrap_content"
@@ -32,6 +34,15 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:background="@drawable/bg_input"
+        app:iconifiedByDefault="false"
+        app:queryHint="חפש לפי אימייל או תאריך..." />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMeetings"

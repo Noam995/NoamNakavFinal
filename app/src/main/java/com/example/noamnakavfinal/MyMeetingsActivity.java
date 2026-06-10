@@ -7,6 +7,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.SearchView; // הוספנו ייבוא לרכיב החיפוש
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -33,8 +34,10 @@ public class MyMeetingsActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private MeetingAdapter adapter;
     private ArrayList<Meeting> meetingsList;
+    private ArrayList<Meeting> fullMeetingsList; // רשימה מלאה שתשמור את כל הפגישות המקוריות מהשרת
     private DatabaseReference meetingsRef;
     private String currentUserEmail;
+    private SearchView searchView; // משתנה עבור רכיב החיפוש
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +60,28 @@ public class MyMeetingsActivity extends AppCompatActivity {
             return insets;
         });
 
+        // הגדרת ה-SearchView והאזנה לשינויי טקסט
+        searchView = findViewById(R.id.searchView);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterMeetings(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterMeetings(newText);
+                return true;
+            }
+        });
+
         // הגדרת הרשימה
         recyclerView = findViewById(R.id.meetingsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         meetingsList = new ArrayList<>();
+        fullMeetingsList = new ArrayList<>(); // אתחול רשימת המקור השמורה
         adapter = new MeetingAdapter(this, meetingsList);
         recyclerView.setAdapter(adapter);
 
@@ -87,7 +107,7 @@ public class MyMeetingsActivity extends AppCompatActivity {
         meetingsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                meetingsList.clear();
+                fullMeetingsList.clear(); // מנקים את הרשימה המלאה השמורה בכל עדכון מהמסד
                 Date currentDate = new Date();
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
@@ -108,19 +128,15 @@ public class MyMeetingsActivity extends AppCompatActivity {
                                 // מחיקת פגישה שעבר התאריך שלה מהמסד נתונים
                                 dataSnapshot.getRef().removeValue();
                             } else {
-                                // הוספה לרשימה אם הפגישה עתידית (או אם הייתה בעיה בפורמט נשמור אותה כדי לא לאבד)
-                                meetingsList.add(meeting);
+                                // הוספה לרשימה המלאה השמורה
+                                fullMeetingsList.add(meeting);
                             }
                         }
                     }
                 }
 
-                adapter.notifyDataSetChanged();
-
-                // הודעה קטנה למשתמש אם אין פגישות בכלל
-                if (meetingsList.isEmpty()) {
-                    Toast.makeText(MyMeetingsActivity.this, "אין לך פגישות עתידיות כרגע", Toast.LENGTH_SHORT).show();
-                }
+                // הפעלת הסינון הנוכחי (או הצגת כל הרשימה במידה ושדה החיפוש ריק)
+                filterMeetings(searchView.getQuery().toString());
             }
 
             @Override
@@ -128,6 +144,29 @@ public class MyMeetingsActivity extends AppCompatActivity {
                 Toast.makeText(MyMeetingsActivity.this, "שגיאה בטעינת פגישות: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // פונקציה חדשה לסינון הפגישות בזמן אמת לפי תאריך או שעה
+    private void filterMeetings(String text) {
+        meetingsList.clear();
+        if (text == null || text.trim().isEmpty()) {
+            meetingsList.addAll(fullMeetingsList);
+        } else {
+            String filterPattern = text.toLowerCase().trim();
+            for (Meeting meeting : fullMeetingsList) {
+                // סינון גמיש לפי תאריך או שעה
+                if ((meeting.getDate() != null && meeting.getDate().toLowerCase().contains(filterPattern)) ||
+                        (meeting.getTime() != null && meeting.getTime().toLowerCase().contains(filterPattern))) {
+                    meetingsList.add(meeting);
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+
+        // הצגת הודעה במידה ואין פגישות בכלל (רק כשהחיפוש ריק)
+        if (meetingsList.isEmpty() && (text == null || text.trim().isEmpty())) {
+            Toast.makeText(MyMeetingsActivity.this, "אין לך פגישות עתידיות כרגע", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // פונקציית עזר לפענוח בטוח של התאריך עם תיקון באגים נפוצים
